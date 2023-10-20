@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <style>
+    #main {
+      width: max-content;
+      padding: 0 15px;
+      margin: 5px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      color: #444;
+    }
+
+    .time {
+      width: 100%;
+      margin: 15px 0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 14px;
+      padding: 2px;
+    }
+
+    .box {
+      display: flex;
+      flex-direction: column;
+      width: 20%;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    .item {
+      margin: 15px 0;
+    }
+
+    #cpu,
+    #mem {
+      position: relative;
+      width: 400px;
+      height: 20px;
+      border: 1px solid #ddd;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .bar {
+      position: absolute;
+      height: 100%;
+      background: #ddd;
+    }
+
+    .text {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="main">
+    <div class="time">
+      <span id="time"></span>
+    </div>
+    <div style="display: flex;justify-content: space-between;">
+      <div class="box">
+        <span>插件</span>
+        <span id="plugin"></span>
+      </div>
+      <div class="box">
+        <span>指令</span>
+        <span id="command"></span>
+      </div>
+      <div class="box">
+        <span>监听器</span>
+        <span id="listener"></span>
+      </div>
+      <div class="box">
+        <span>消息队列</span>
+        <span id="message"></span>
+      </div>
+    </div>
+    <div class="item">
+      <div id="cpu">
+        <div class="bar"></div>
+        <span class="text"></span>
+      </div>
+    </div>
+    <div class="item">
+      <div id="mem">
+        <div class="bar"></div>
+        <div class="bar" style="background: #aaa"></div>
+        <span class="text"></span>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  const data = window.data || {}
+
+  document.getElementById('time').innerText = `${data.name || 'Bot'}: ${data.time || '未知'}`
+  document.getElementById('plugin').innerText = data.plugin ?? '未知'
+  document.getElementById('command').innerText = data.command ?? '未知'
+  document.getElementById('listener').innerText = data.listener ?? '未知'
+  document.getElementById('message').innerText = data.message ?? '未知'
+
+  const cpu = document.getElementById('cpu')
+  cpu.children[0].style.width = data?.cpu
+  cpu.children[1].innerText = `CPU: ${data?.cpu || '未知'}`
+
+  const mem = document.getElementById('mem')
+  mem.children[0].style.width = data?.mem?.[0]
+  mem.children[1].style.width = data?.mem?.[1]
+  mem.children[2].innerText = `MEM: ${data?.mem?.[0] || '未知'}`
+
+</script>
+
+</html>

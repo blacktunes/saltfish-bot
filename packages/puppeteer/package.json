@@ -1,0 +1,12 @@
+{
+  "name": "@saltfish-bot/puppeteer",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rimraf dist && tsc"
+  },
+  "dependencies": {
+    "moment": "^2.29.4",
+    "puppeteer": "^21.2.1"
+  }
+}

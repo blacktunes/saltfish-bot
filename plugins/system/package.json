@@ -1,0 +1,16 @@
+{
+  "name": "@saltfish-bot/plugin-system",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rimraf dist && tsc && gulp copy"
+  },
+  "dependencies": {
+    "@saltfish-bot/puppeteer": "workspace:^",
+    "node-os-utils": "^1.3.7",
+    "saltfish-bot": "workspace:^"
+  },
+  "devDependencies": {
+    "@types/node-os-utils": "^1.3.3"
+  }
+}

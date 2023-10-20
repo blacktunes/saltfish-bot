@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "nodemon --ext js,ts --watch test/src --exec ts-node test/src",
+    "build": "pnpm lerna run build"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.7",
+    "gulp": "^4.0.2",
+    "lerna": "^7.4.1",
+    "nodemon": "^3.0.1",
+    "rimraf": "^5.0.5",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  }
+}
