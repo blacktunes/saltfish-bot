@@ -2,7 +2,8 @@
   "private": true,
   "scripts": {
     "dev": "nodemon --ext js,ts --watch test/src --exec ts-node test/src",
-    "build": "pnpm lerna run build"
+    "build": "lerna run build",
+    "publish": "lerna run build && lerna publish"
   },
   "devDependencies": {
     "@types/node": "^20.8.7",
