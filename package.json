@@ -6,6 +6,8 @@
     "publish": "lerna run build && lerna publish"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.8.0",
+    "@commitlint/config-conventional": "^17.8.0",
     "@types/node": "^20.8.7",
     "gulp": "^4.0.2",
     "lerna": "^7.4.1",
