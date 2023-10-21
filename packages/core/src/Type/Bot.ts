@@ -15,7 +15,7 @@ export interface PluginConfig {
 }
 
 export interface Plugin {
-  new(bot: Bot, config?: any): BotPlugin
+  new (bot: Bot, config?: any): BotPlugin
 }
 
 export type PluginFunction = (bot: Bot) => void | Promise<void>

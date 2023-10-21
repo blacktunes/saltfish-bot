@@ -44,7 +44,10 @@ export class Admin {
         this.banlist.delete(user_id)
         this.Bot.Log.logWarning(`${user} 已解除禁用`, 'BAN')
         if (group_id) {
-          this.Bot.Api.sendGroupMsg(group_id, this.Bot.Data.config.admin.group_lift_ban.replace('[id]', this.Bot.CQCode.at(user_id)))
+          this.Bot.Api.sendGroupMsg(
+            group_id,
+            this.Bot.Data.config.admin.group_lift_ban.replace('[id]', this.Bot.CQCode.at(user_id))
+          )
         } else {
           this.Bot.Api.sendPrivateMsg(user_id, this.Bot.Data.config.admin.private_lift_ban)
         }

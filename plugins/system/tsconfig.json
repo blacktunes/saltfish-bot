@@ -12,15 +12,9 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": false,
     "resolveJsonModule": true,
-    "declaration":true,
+    "declaration": true,
     "alwaysStrict": true
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts",
-    "**/node_modules/*"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts", "**/node_modules/*"]
 }

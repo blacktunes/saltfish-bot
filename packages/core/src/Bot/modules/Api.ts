@@ -1,5 +1,21 @@
 import { red, white, yellow } from 'colors'
-import { Device, EssenceMsg, GroupInfo, HonorInfo, HonorItem, HonorType, ImageInfo, MemberInfo, Message, Msg, NodeMessage, PrivateSender, QQInfo, Status, VersionInfo } from '../../Type'
+import {
+  Device,
+  EssenceMsg,
+  GroupInfo,
+  HonorInfo,
+  HonorItem,
+  HonorType,
+  ImageInfo,
+  MemberInfo,
+  Message,
+  Msg,
+  NodeMessage,
+  PrivateSender,
+  QQInfo,
+  Status,
+  VersionInfo
+} from '../../Type'
 import { Bot } from '../Bot'
 
 export class Api {
@@ -11,7 +27,7 @@ export class Api {
 
   getApiStatus(): void {
     this.Bot.Conn.useAPI('get_status')
-      .then(result => {
+      .then((result) => {
         if (result.status !== 'ok') {
           this.Bot.Log.logError('心跳链接异常', 'WS')
         }
@@ -28,7 +44,11 @@ export class Api {
    * @param {boolean} auto_escape 消息内容是否作为纯文本发送 ( 即不解析 CQ 码 ) , 只在 message 字段是字符串时有效
    * @returns {Promise<number>} 成功返回message_id，失败返回retcode(100)
    */
-  async sendPrivateMsg(user_id: number, message: Message, auto_escape: boolean = false): Promise<number> {
+  async sendPrivateMsg(
+    user_id: number,
+    message: Message,
+    auto_escape: boolean = false
+  ): Promise<number> {
     const logMsg = JSON.stringify(message)
     if (this.Bot.Debug.debug) {
       this.Bot.Log.logDebug(`发送消息至(${user_id}): ${logMsg}`)
@@ -42,16 +62,26 @@ export class Api {
     })
 
     for (const i in this.Bot.Event.sendEvent.private) {
-      if (await (this.Bot.Event.sendEvent.private[i])(user_id, message)) break
+      if (await this.Bot.Event.sendEvent.private[i](user_id, message)) break
     }
 
     const name = white(this.Bot.Data.friendList[user_id] || '')
 
     if (result.status === 'ok') {
-      this.Bot.Log.logInfoSend(`发送消息至 ${name}(${white(user_id.toString())}): ${white(logMsg)} (${white(result.data.message_id.toString())})`, 'API')
+      this.Bot.Log.logInfoSend(
+        `发送消息至 ${name}(${white(user_id.toString())}): ${white(logMsg)} (${white(
+          result.data.message_id.toString()
+        )})`,
+        'API'
+      )
       return result.data.message_id
     } else {
-      this.Bot.Log.logError(`发送消息至 ${name}(${white(user_id.toString())}): ${white(logMsg)} 失败 (${result.retcode})`, 'API')
+      this.Bot.Log.logError(
+        `发送消息至 ${name}(${white(user_id.toString())}): ${white(logMsg)} 失败 (${
+          result.retcode
+        })`,
+        'API'
+      )
       return result.retcode
     }
   }
@@ -63,7 +93,11 @@ export class Api {
    * @param {boolean} auto_escape 消息内容是否作为纯文本发送 ( 即不解析 CQ 码 ) , 只在 message 字段是字符串时有效
    * @returns 成功返回message_id，失败返回retcode(100)
    */
-  async sendGroupMsg(group_id: number, message: Message, auto_escape: boolean = false): Promise<number> {
+  async sendGroupMsg(
+    group_id: number,
+    message: Message,
+    auto_escape: boolean = false
+  ): Promise<number> {
     const logMsg = JSON.stringify(message)
     if (this.Bot.Debug.debug) {
       this.Bot.Log.logDebug(`发送消息至群(${group_id}): ${logMsg}`)
@@ -77,16 +111,26 @@ export class Api {
     })
 
     for (const i in this.Bot.Event.sendEvent.group) {
-      if (await (this.Bot.Event.sendEvent.group[i])(group_id, message)) break
+      if (await this.Bot.Event.sendEvent.group[i](group_id, message)) break
     }
 
     const group_name = white(this.Bot.Data.groupList[group_id] || '')
 
     if (result.status === 'ok') {
-      this.Bot.Log.logInfoSend(`发送消息至群 ${group_name}(${white(group_id.toString())}): ${white(logMsg)} (${result.data.message_id})`, 'API')
+      this.Bot.Log.logInfoSend(
+        `发送消息至群 ${group_name}(${white(group_id.toString())}): ${white(logMsg)} (${
+          result.data.message_id
+        })`,
+        'API'
+      )
       return result.data.message_id
     } else {
-      this.Bot.Log.logError(`发送消息至群 ${group_name}(${white(group_id.toString())}): ${white(logMsg)} 失败 (${result.retcode})`, 'API')
+      this.Bot.Log.logError(
+        `发送消息至群 ${group_name}(${white(group_id.toString())}): ${white(logMsg)} 失败 (${
+          result.retcode
+        })`,
+        'API'
+      )
       return result.retcode
     }
   }
@@ -108,16 +152,24 @@ export class Api {
     })
 
     for (const i in this.Bot.Event.sendEvent.group) {
-      if (await (this.Bot.Event.sendEvent.group[i])(group_id, '')) break
+      if (await this.Bot.Event.sendEvent.group[i](group_id, '')) break
     }
 
     const group_name = white(this.Bot.Data.groupList[group_id] || '')
 
     if (result.status === 'ok') {
-      this.Bot.Log.logInfoSend(`发送合并转发至群 ${group_name}(${white(group_id.toString())})成功(${white(result.data.message_id.toString())})`, 'API')
+      this.Bot.Log.logInfoSend(
+        `发送合并转发至群 ${group_name}(${white(group_id.toString())})成功(${white(
+          result.data.message_id.toString()
+        )})`,
+        'API'
+      )
       return result.data.message_id
     } else {
-      this.Bot.Log.logError(`发送合并转发至群 ${group_name}(${white(group_id.toString())})失败`, 'API')
+      this.Bot.Log.logError(
+        `发送合并转发至群 ${group_name}(${white(group_id.toString())})失败`,
+        'API'
+      )
       return result.retcode
     }
   }
@@ -243,9 +295,16 @@ export class Api {
     })
 
     const group_name = this.Bot.Data.groupList[group_id] || ''
-    const user_name = this.Bot.Data.groupMemberList[group_id] ? this.Bot.Data.groupMemberList[group_id][user_id] || '' : ''
+    const user_name = this.Bot.Data.groupMemberList[group_id]
+      ? this.Bot.Data.groupMemberList[group_id][user_id] || ''
+      : ''
 
-    this.Bot.Log.logInfo(`将 ${yellow(group_name)}(${yellow(group_id.toString())}) - ${yellow(user_name)}(${yellow(user_id.toString())}) 移出群聊`, 'API')
+    this.Bot.Log.logInfo(
+      `将 ${yellow(group_name)}(${yellow(group_id.toString())}) - ${yellow(user_name)}(${yellow(
+        user_id.toString()
+      )}) 移出群聊`,
+      'API'
+    )
   }
 
   /**
@@ -256,7 +315,11 @@ export class Api {
    */
   setGroupBan(group_id: number, user_id: number, duration = 60 * 30): void {
     if (this.Bot.Debug.debug) {
-      this.Bot.Log.logDebug(`${duration === 0 ? '解除' : '禁言'} (${group_id}) - (${user_id}) ${duration === 0 ? '禁言' : `${duration.toString()}秒`}`)
+      this.Bot.Log.logDebug(
+        `${duration === 0 ? '解除' : '禁言'} (${group_id}) - (${user_id}) ${
+          duration === 0 ? '禁言' : `${duration.toString()}秒`
+        }`
+      )
     }
 
     this.Bot.Conn.useAPI('set_group_ban', {
@@ -266,9 +329,18 @@ export class Api {
     })
 
     const group_name = this.Bot.Data.groupList[group_id] || ''
-    const user_name = this.Bot.Data.groupMemberList[group_id] ? this.Bot.Data.groupMemberList[group_id][user_id] || '' : ''
+    const user_name = this.Bot.Data.groupMemberList[group_id]
+      ? this.Bot.Data.groupMemberList[group_id][user_id] || ''
+      : ''
 
-    this.Bot.Log.logInfo(`${duration === 0 ? '解除' : '禁言'} ${yellow(group_name)}(${yellow(group_id.toString())}) - ${yellow(user_name)}(${yellow(user_id.toString())}) ${duration === 0 ? '禁言' : `${yellow(duration.toString())}秒`}`, 'API')
+    this.Bot.Log.logInfo(
+      `${duration === 0 ? '解除' : '禁言'} ${yellow(group_name)}(${yellow(
+        group_id.toString()
+      )}) - ${yellow(user_name)}(${yellow(user_id.toString())}) ${
+        duration === 0 ? '禁言' : `${yellow(duration.toString())}秒`
+      }`,
+      'API'
+    )
   }
 
   /**
@@ -290,7 +362,12 @@ export class Api {
 
     const group_name = this.Bot.Data.groupList[group_id] || ''
 
-    this.Bot.Log.logInfo(`禁言 ${yellow(group_name)}(${yellow(group_id.toString())}) - 匿名用户 ${yellow(duration.toString())}秒`, 'API')
+    this.Bot.Log.logInfo(
+      `禁言 ${yellow(group_name)}(${yellow(group_id.toString())}) - 匿名用户 ${yellow(
+        duration.toString()
+      )}秒`,
+      'API'
+    )
   }
 
   /**
@@ -310,7 +387,12 @@ export class Api {
 
     const group_name = this.Bot.Data.groupList[group_id] || ''
 
-    this.Bot.Log.logInfo(`${yellow(enable ? '设置' : '解除')}群 ${yellow(group_name)}(${yellow(group_id.toString())}) 禁言`, 'API')
+    this.Bot.Log.logInfo(
+      `${yellow(enable ? '设置' : '解除')}群 ${yellow(group_name)}(${yellow(
+        group_id.toString()
+      )}) 禁言`,
+      'API'
+    )
   }
 
   /**
@@ -331,10 +413,16 @@ export class Api {
     })
 
     const group_name = this.Bot.Data.groupList[group_id] || ''
-    const user_name = this.Bot.Data.groupMemberList[group_id] ? this.Bot.Data.groupMemberList[group_id][user_id] || '' : ''
+    const user_name = this.Bot.Data.groupMemberList[group_id]
+      ? this.Bot.Data.groupMemberList[group_id][user_id] || ''
+      : ''
 
-
-    this.Bot.Log.logInfo(`${enable ? '设置' : '取消'}管理员 ${yellow(group_name)}(${yellow(group_id.toString())}) - ${yellow(user_name)}(${yellow(user_id.toString())})`, 'API')
+    this.Bot.Log.logInfo(
+      `${enable ? '设置' : '取消'}管理员 ${yellow(group_name)}(${yellow(
+        group_id.toString()
+      )}) - ${yellow(user_name)}(${yellow(user_id.toString())})`,
+      'API'
+    )
   }
 
   /**
@@ -354,10 +442,16 @@ export class Api {
     })
 
     const group_name = this.Bot.Data.groupList[group_id] || ''
-    const user_name = this.Bot.Data.groupMemberList[group_id] ? this.Bot.Data.groupMemberList[group_id][user_id] || '' : ''
+    const user_name = this.Bot.Data.groupMemberList[group_id]
+      ? this.Bot.Data.groupMemberList[group_id][user_id] || ''
+      : ''
 
-
-    this.Bot.Log.logInfo(`设置 ${yellow(group_name)}(${yellow(group_id.toString())}) - ${yellow(user_name)}(${yellow(user_id.toString())}) 群名片为 ${card || '空'}`, 'API')
+    this.Bot.Log.logInfo(
+      `设置 ${yellow(group_name)}(${yellow(group_id.toString())}) - ${yellow(user_name)}(${yellow(
+        user_id.toString()
+      )}) 群名片为 ${card || '空'}`,
+      'API'
+    )
   }
 
   /**
@@ -377,7 +471,10 @@ export class Api {
 
     const name = this.Bot.Data.groupList[group_id] || ''
 
-    this.Bot.Log.logInfo(`设置 ${yellow(name)}(${yellow(group_id.toString())}) 群名为 ${yellow(group_name)}`, 'API')
+    this.Bot.Log.logInfo(
+      `设置 ${yellow(name)}(${yellow(group_id.toString())}) 群名为 ${yellow(group_name)}`,
+      'API'
+    )
   }
 
   /**
@@ -397,7 +494,12 @@ export class Api {
 
     const group_name = this.Bot.Data.groupList[group_id] || ''
 
-    this.Bot.Log.logInfo(`${yellow(is_dismiss ? '解散' : '退出')}群组 ${yellow(group_name)}(${yellow(group_id.toString())})`, 'API')
+    this.Bot.Log.logInfo(
+      `${yellow(is_dismiss ? '解散' : '退出')}群组 ${yellow(group_name)}(${yellow(
+        group_id.toString()
+      )})`,
+      'API'
+    )
   }
 
   /**
@@ -407,7 +509,12 @@ export class Api {
    * @param special_title 专属头衔，不填或空字符串表示删除专属头衔
    * @param duration 专属头衔有效期，单位秒，-1 表示永久，不过此项似乎没有效果，可能是只有某些特殊的时间长度有效，有待测试
    */
-  setGroupSpecialTitle(group_id: number, user_id: number, special_title: string, duration: number = -1): void {
+  setGroupSpecialTitle(
+    group_id: number,
+    user_id: number,
+    special_title: string,
+    duration: number = -1
+  ): void {
     if (this.Bot.Debug.debug) {
       this.Bot.Log.logDebug(`设置 (${group_id}) - (${user_id}) 专属头衔为 ${special_title}`)
     }
@@ -420,9 +527,16 @@ export class Api {
     })
 
     const group_name = this.Bot.Data.groupList[group_id] || ''
-    const user_name = this.Bot.Data.groupMemberList[group_id] ? this.Bot.Data.groupMemberList[group_id][user_id] || '' : ''
+    const user_name = this.Bot.Data.groupMemberList[group_id]
+      ? this.Bot.Data.groupMemberList[group_id][user_id] || ''
+      : ''
 
-    this.Bot.Log.logInfo(`设置 ${yellow(group_name)}(${yellow(group_id.toString())}) - ${yellow(user_name)}(${yellow(user_id.toString())}) 专属头衔为 ${yellow(special_title)}`, 'API')
+    this.Bot.Log.logInfo(
+      `设置 ${yellow(group_name)}(${yellow(group_id.toString())}) - ${yellow(user_name)}(${yellow(
+        user_id.toString()
+      )}) 专属头衔为 ${yellow(special_title)}`,
+      'API'
+    )
   }
 
   /**
@@ -451,9 +565,16 @@ export class Api {
    * @param approve 是否同意请求／邀请
    * @param reason 拒绝理由（仅在拒绝时有效）
    */
-  setGroupAddRequest(flag: string, sub_type: 'add' | 'invite', approve = true, reason: string): void {
+  setGroupAddRequest(
+    flag: string,
+    sub_type: 'add' | 'invite',
+    approve = true,
+    reason: string
+  ): void {
     if (this.Bot.Debug.debug) {
-      this.Bot.Log.logDebug(`${approve ? '同意' : '拒绝'}加群${sub_type === 'invite' ? '邀请' : '请求'}`)
+      this.Bot.Log.logDebug(
+        `${approve ? '同意' : '拒绝'}加群${sub_type === 'invite' ? '邀请' : '请求'}`
+      )
     }
     this.Bot.Conn.useAPI('set_group_add_request', {
       flag,
@@ -462,7 +583,10 @@ export class Api {
       reason
     })
 
-    this.Bot.Log.logInfo(`${yellow(approve ? '同意' : '拒绝')}加群${sub_type === 'invite' ? '邀请' : '请求'}`, 'API')
+    this.Bot.Log.logInfo(
+      `${yellow(approve ? '同意' : '拒绝')}加群${sub_type === 'invite' ? '邀请' : '请求'}`,
+      'API'
+    )
   }
 
   /**
@@ -489,7 +613,10 @@ export class Api {
     const result = await this.Bot.Conn.useAPI('get_login_info')
 
     if (result.status === 'ok') {
-      this.Bot.Log.logInfoSend(`获取登录号信息成功 ${white(result.data.nickname)}(${white(result.data.user_id)})`, 'API')
+      this.Bot.Log.logInfoSend(
+        `获取登录号信息成功 ${white(result.data.nickname)}(${white(result.data.user_id)})`,
+        'API'
+      )
       return result.data
     } else {
       this.Bot.Log.logError(`获取登录号信息失败`, 'API')
@@ -505,7 +632,10 @@ export class Api {
    * @param user_id QQ 号
    * @param no_cache 是否不使用缓存（使用缓存可能更新不及时, 但响应更快）
    */
-  async getStrangerInfo(user_id: number, no_cache: boolean = false): Promise<(PrivateSender & { qid?: number }) | undefined> {
+  async getStrangerInfo(
+    user_id: number,
+    no_cache: boolean = false
+  ): Promise<(PrivateSender & { qid?: number }) | undefined> {
     if (this.Bot.Debug.debug) {
       this.Bot.Log.logDebug(`获取 (${user_id}) 信息`)
       return {
@@ -576,10 +706,16 @@ export class Api {
     const group_name = this.Bot.Data.groupList[group_id] || ''
 
     if (result.status === 'ok') {
-      this.Bot.Log.logInfoSend(`获取群 ${white(group_name)}(${white(group_id.toString())}) 信息成功`, 'API')
+      this.Bot.Log.logInfoSend(
+        `获取群 ${white(group_name)}(${white(group_id.toString())}) 信息成功`,
+        'API'
+      )
       return result.data
     } else {
-      this.Bot.Log.logError(`获取群 ${white(group_name)}(${white(group_id.toString())}) 信息失败`, 'API')
+      this.Bot.Log.logError(
+        `获取群 ${white(group_name)}(${white(group_id.toString())}) 信息失败`,
+        'API'
+      )
     }
   }
 
@@ -609,7 +745,11 @@ export class Api {
    * @param user_id QQ 号
    * @param no_cache 是否不使用缓存（使用缓存可能更新不及时，但响应更快）
    */
-  async getGroupMemberInfo(group_id: number, user_id: number, no_cache = false): Promise<MemberInfo | undefined> {
+  async getGroupMemberInfo(
+    group_id: number,
+    user_id: number,
+    no_cache = false
+  ): Promise<MemberInfo | undefined> {
     if (this.Bot.Debug.debug) {
       this.Bot.Log.logDebug(`获取群成员 (${group_id}) - (${user_id}) 信息`)
       return {
@@ -638,13 +778,25 @@ export class Api {
     })
 
     const group_name = this.Bot.Data.groupList[group_id] || ''
-    const user_name = this.Bot.Data.groupMemberList[group_id] ? this.Bot.Data.groupMemberList[group_id][user_id] || '' : ''
+    const user_name = this.Bot.Data.groupMemberList[group_id]
+      ? this.Bot.Data.groupMemberList[group_id][user_id] || ''
+      : ''
 
     if (result.status === 'ok') {
-      this.Bot.Log.logInfoSend(`获取群成员 ${white(group_name)}(${white(group_id.toString())}) - ${white(user_name)}(${white(user_id.toString())}) 信息成功`, 'API')
+      this.Bot.Log.logInfoSend(
+        `获取群成员 ${white(group_name)}(${white(group_id.toString())}) - ${white(
+          user_name
+        )}(${white(user_id.toString())}) 信息成功`,
+        'API'
+      )
       return result.data
     } else {
-      this.Bot.Log.logError(`获取群成员 ${white(group_name)}(${white(group_id.toString())}) - ${white(user_name)}(${white(user_id.toString())}) 信息失败`, 'API')
+      this.Bot.Log.logError(
+        `获取群成员 ${white(group_name)}(${white(group_id.toString())}) - ${white(
+          user_name
+        )}(${white(user_id.toString())}) 信息失败`,
+        'API'
+      )
     }
   }
 
@@ -665,10 +817,18 @@ export class Api {
     const group_name = this.Bot.Data.groupList[group_id] || ''
 
     if (result.status === 'ok') {
-      this.Bot.Log.logInfoSend(`获取群 ${white(group_name)}(${white(group_id.toString())}) 成员列表成功 群员数：${white(result.data.length)}`, 'API')
+      this.Bot.Log.logInfoSend(
+        `获取群 ${white(group_name)}(${white(group_id.toString())}) 成员列表成功 群员数：${white(
+          result.data.length
+        )}`,
+        'API'
+      )
       return result.data
     } else {
-      this.Bot.Log.logError(`获取群 ${white(group_name)}(${white(group_id.toString())}) 成员列表失败`, 'API')
+      this.Bot.Log.logError(
+        `获取群 ${white(group_name)}(${white(group_id.toString())}) 成员列表失败`,
+        'API'
+      )
       return []
     }
   }
@@ -678,7 +838,10 @@ export class Api {
    * @param group_id 群号
    * @param type 要获取的群荣誉类型, 可传入 talkative performer legend strong_newbie emotion 以分别获取单个类型的群荣誉数据, 或传入 all 获取所有数据
    */
-  async getGroupHonorInfo<T extends HonorType>(group_id: number, type: T): Promise<(HonorInfo & HonorItem[T]) | undefined> {
+  async getGroupHonorInfo<T extends HonorType>(
+    group_id: number,
+    type: T
+  ): Promise<(HonorInfo & HonorItem[T]) | undefined> {
     if (this.Bot.Debug.debug) {
       const group = {
         group_id: 1
@@ -721,7 +884,14 @@ export class Api {
         return { ...group, ...emotion } as any
       }
       if (type === 'performer') {
-        return { ...group, ...talkative, ...performer, ...legend, ...strong_newbie, ...emotion } as any
+        return {
+          ...group,
+          ...talkative,
+          ...performer,
+          ...legend,
+          ...strong_newbie,
+          ...emotion
+        } as any
       }
     }
 
@@ -733,10 +903,16 @@ export class Api {
     const group_name = this.Bot.Data.groupList[group_id] || ''
 
     if (result.status === 'ok') {
-      this.Bot.Log.logInfoSend(`获取群 ${white(group_name)}(${white(group_id.toString())}) 成荣誉信息成功`, 'API')
+      this.Bot.Log.logInfoSend(
+        `获取群 ${white(group_name)}(${white(group_id.toString())}) 成荣誉信息成功`,
+        'API'
+      )
       return result.data
     } else {
-      this.Bot.Log.logError(`获取群 ${white(group_name)}(${white(group_id.toString())}) 成荣誉信息失败`, 'API')
+      this.Bot.Log.logError(
+        `获取群 ${white(group_name)}(${white(group_id.toString())}) 成荣誉信息失败`,
+        'API'
+      )
     }
   }
 
@@ -780,20 +956,23 @@ export class Api {
    * 获取群 @全体成员 剩余次数
    * @param group_id 群号
    */
-  async getGroupAtAllRemain(group_id: number): Promise<{
-    /**
-     * 是否可以 @全体成员
-     */
-    can_at_all: boolean
-    /**
-     * 群内所有管理当天剩余 @全体成员 次数
-     */
-    remain_at_all_count_for_group: number
-    /**
-     * 当天剩余 @全体成员 次数
-     */
-    remain_at_all_count_for_uin: number
-  } | undefined> {
+  async getGroupAtAllRemain(group_id: number): Promise<
+    | {
+        /**
+         * 是否可以 @全体成员
+         */
+        can_at_all: boolean
+        /**
+         * 群内所有管理当天剩余 @全体成员 次数
+         */
+        remain_at_all_count_for_group: number
+        /**
+         * 当天剩余 @全体成员 次数
+         */
+        remain_at_all_count_for_uin: number
+      }
+    | undefined
+  > {
     if (this.Bot.Debug.debug) {
       this.Bot.Log.logDebug(`获取群 (${group_id}) @全体成员 剩余次数`)
     }
@@ -804,12 +983,19 @@ export class Api {
 
     const group_name = this.Bot.Data.groupList[group_id] || ''
 
-
     if (result.status === 'ok') {
-      this.Bot.Log.logInfoSend(`获取群 ${white(group_name)}(${white(group_id.toString())}) @全体成员 剩余次数成功 剩余次数: ${white(result.data.remain_at_all_count_for_uin)}`, 'API')
+      this.Bot.Log.logInfoSend(
+        `获取群 ${white(group_name)}(${white(
+          group_id.toString()
+        )}) @全体成员 剩余次数成功 剩余次数: ${white(result.data.remain_at_all_count_for_uin)}`,
+        'API'
+      )
       return result.data
     } else {
-      this.Bot.Log.logError(`获取群 ${white(group_name)}(${white(group_id.toString())}) @全体成员 剩余次数失败`, 'API')
+      this.Bot.Log.logError(
+        `获取群 ${white(group_name)}(${white(group_id.toString())}) @全体成员 剩余次数失败`,
+        'API'
+      )
     }
   }
 
@@ -828,7 +1014,10 @@ export class Api {
     })
 
     if (result.status === 'ok') {
-      this.Bot.Log.logInfoSend(`获取当前账号在线客户端列表成功 在线数: ${white(result.data.clients.length)}`, 'API')
+      this.Bot.Log.logInfoSend(
+        `获取当前账号在线客户端列表成功 在线数: ${white(result.data.clients.length)}`,
+        'API'
+      )
       return result.data
     } else {
       this.Bot.Log.logError('获取当前账号在线客户端列表失败', 'API')
@@ -841,7 +1030,10 @@ export class Api {
    * @param group_id 群号
    * @param message_seq 起始消息序号, 可通过 get_msg 获得
    */
-  async getGroupMsgHistory(group_id: number, message_seq?: number): Promise<{ messages: Message[] }> {
+  async getGroupMsgHistory(
+    group_id: number,
+    message_seq?: number
+  ): Promise<{ messages: Message[] }> {
     if (this.Bot.Debug.debug) {
       this.Bot.Log.logDebug('获取群消息历史记录')
       return { messages: [] }
@@ -855,10 +1047,16 @@ export class Api {
     const group_name = this.Bot.Data.groupList[group_id] || ''
 
     if (result.status === 'ok') {
-      this.Bot.Log.logInfoSend(`获取群 ${white(group_name)}(${white(group_id.toString())}) 消息历史记录成功`, 'API')
+      this.Bot.Log.logInfoSend(
+        `获取群 ${white(group_name)}(${white(group_id.toString())}) 消息历史记录成功`,
+        'API'
+      )
       return result.data
     } else {
-      this.Bot.Log.logError(`获取群 ${white(group_name)}(${white(group_id.toString())}) 消息历史记录失败`, 'API')
+      this.Bot.Log.logError(
+        `获取群 ${white(group_name)}(${white(group_id.toString())}) 消息历史记录失败`,
+        'API'
+      )
       return { messages: [] }
     }
   }
@@ -912,10 +1110,18 @@ export class Api {
     const group_name = this.Bot.Data.groupList[group_id] || ''
 
     if (result.status === 'ok') {
-      this.Bot.Log.logInfoSend(`获取群 ${white(group_name)}(${white(group_id.toString())}) 精华消息列表成功 消息数: ${white(result.data.length)}`, 'API')
+      this.Bot.Log.logInfoSend(
+        `获取群 ${white(group_name)}(${white(
+          group_id.toString()
+        )}) 精华消息列表成功 消息数: ${white(result.data.length)}`,
+        'API'
+      )
       return result.data
     } else {
-      this.Bot.Log.logError(`获取群 ${white(group_name)}(${white(group_id.toString())}) 精华消息列表失败`, 'API')
+      this.Bot.Log.logError(
+        `获取群 ${white(group_name)}(${white(group_id.toString())}) 精华消息列表失败`,
+        'API'
+      )
       return []
     }
   }
@@ -936,7 +1142,12 @@ export class Api {
     })
 
     if (result.status === 'ok') {
-      this.Bot.Log.logInfoSend(`检查 (${white(url)}) 安全性成功 结果: ${result.data.level === 1 ? '安全' : result.data.level === 3 ? red('危险') : yellow('未知')}`, 'API')
+      this.Bot.Log.logInfoSend(
+        `检查 (${white(url)}) 安全性成功 结果: ${
+          result.data.level === 1 ? '安全' : result.data.level === 3 ? red('危险') : yellow('未知')
+        }`,
+        'API'
+      )
       return result.data
     } else {
       this.Bot.Log.logError(`检查 (${white(url)}) 安全性失败`, 'API')

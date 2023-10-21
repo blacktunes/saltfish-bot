@@ -13,7 +13,7 @@ export class Command {
 
   /** 增加命令 */
   command(name: string) {
-    const repeat = this.list.some(item => {
+    const repeat = this.list.some((item) => {
       return item.comm.includes(name)
     })
     if (repeat) {
@@ -25,7 +25,10 @@ export class Command {
 
     setCommLister(this.Bot as Bot, comm)
 
-    this.Bot.Log.logNotice(`${comm.group ? `${yellow(comm.group)} - ` : ''}${yellow(name)} 已加载`, '指令')
+    this.Bot.Log.logNotice(
+      `${comm.group ? `${yellow(comm.group)} - ` : ''}${yellow(name)} 已加载`,
+      '指令'
+    )
 
     return new SetComm(this.Bot as Bot, comm, repeat)
   }
@@ -44,9 +47,9 @@ export class Comm {
     group: ((e: GroupMsg) => Prevent)[]
     private: ((e: PrivateMsg) => Prevent)[]
   } = {
-      group: [],
-      private: []
-    }
+    group: [],
+    private: []
+  }
   whitelist: {
     group?: Set<number>
     user?: Set<number>
@@ -71,7 +74,7 @@ export class SetComm {
 
   /** 增加指令别名 */
   alias(name: string) {
-    const repeat = this.Bot.Command.list.some(item => {
+    const repeat = this.Bot.Command.list.some((item) => {
       return item.comm.includes(name)
     })
     if (repeat) {
@@ -127,10 +130,13 @@ export class SetComm {
       if (this.comm.blacklist.group) {
         const commName = magenta(this.comm.comm[0])
         const list = magenta(group_list.toString())
-        this.Bot.Log.logWarning(`${commName} 已设置群聊黑名单，该白名单 ${list} 设置无效`, this.plugin ? '插件' : 'Admin')
+        this.Bot.Log.logWarning(
+          `${commName} 已设置群聊黑名单，该白名单 ${list} 设置无效`,
+          this.plugin ? '插件' : 'Admin'
+        )
       } else {
         if (this.comm.whitelist.group) {
-          group_list.forEach(group_id => {
+          group_list.forEach((group_id) => {
             this.comm.whitelist.group.add(group_id)
           })
         } else {
@@ -143,10 +149,13 @@ export class SetComm {
       if (this.comm.blacklist.user) {
         const commName = magenta(this.comm.comm[0])
         const list = magenta(user_list.toString())
-        this.Bot.Log.logWarning(`${commName} 已设置私聊黑名单，该白名单 ${list} 设置无效`, this.plugin ? '插件' : 'Admin')
+        this.Bot.Log.logWarning(
+          `${commName} 已设置私聊黑名单，该白名单 ${list} 设置无效`,
+          this.plugin ? '插件' : 'Admin'
+        )
       } else {
         if (this.comm.whitelist.user) {
-          user_list.forEach(group_id => {
+          user_list.forEach((group_id) => {
             this.comm.whitelist.user.add(group_id)
           })
         } else {
@@ -169,10 +178,13 @@ export class SetComm {
       if (this.comm.whitelist.group) {
         const commName = magenta(this.comm.comm[0])
         const list = magenta(group_list.toString())
-        this.Bot.Log.logWarning(`${commName} 已设置群聊白名单，该黑名单 ${list} 设置无效`, this.plugin ? '插件' : 'Admin')
+        this.Bot.Log.logWarning(
+          `${commName} 已设置群聊白名单，该黑名单 ${list} 设置无效`,
+          this.plugin ? '插件' : 'Admin'
+        )
       } else {
         if (this.comm.blacklist.group) {
-          group_list.forEach(group_id => {
+          group_list.forEach((group_id) => {
             this.comm.blacklist.group.add(group_id)
           })
         } else {
@@ -185,10 +197,13 @@ export class SetComm {
       if (this.comm.whitelist.user) {
         const commName = magenta(this.comm.comm[0])
         const list = magenta(user_list.toString())
-        this.Bot.Log.logWarning(`${commName} 已设置私聊白名单，该黑名单 ${list} 设置无效`, this.plugin ? '插件' : 'Admin')
+        this.Bot.Log.logWarning(
+          `${commName} 已设置私聊白名单，该黑名单 ${list} 设置无效`,
+          this.plugin ? '插件' : 'Admin'
+        )
       } else {
         if (this.comm.blacklist.user) {
-          user_list.forEach(group_id => {
+          user_list.forEach((group_id) => {
             this.comm.blacklist.user.add(group_id)
           })
         } else {
@@ -202,7 +217,7 @@ export class SetComm {
 }
 
 export const setCommLister = (Bot: Bot, comm: Comm) => {
-  Bot.Event.on('message.group', async e => {
+  Bot.Event.on('message.group', async (e) => {
     if (comm.fn.group.length < 1) return
     if (comm.admin && !Bot.Admin.isAdmin(e.sender.user_id)) return
     if (comm.group) {
@@ -227,13 +242,16 @@ export const setCommLister = (Bot: Bot, comm: Comm) => {
     const username = white(e.sender.card || e.sender.nickname)
     const userId = white(e.user_id.toString())
     const commName = yellow(comm.comm[0])
-    Bot.Log.logNotice(`群${groupName}(${groupId}) - ${username}(${userId})触发${commName}指令`, '指令')
+    Bot.Log.logNotice(
+      `群${groupName}(${groupId}) - ${username}(${userId})触发${commName}指令`,
+      '指令'
+    )
 
     for (const i in comm.fn.group) {
       if (await comm.fn.group[i](e)) return true
     }
   })
-  Bot.Event.on('message.private', async e => {
+  Bot.Event.on('message.private', async (e) => {
     if (comm.fn.private.length < 1) return
     if (comm.admin && !Bot.Admin.isAdmin(e.sender.user_id)) return
     if (comm.group) {

@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync } from 'fs-extra'
 import { readSync, writeSync } from 'node-yaml'
-import { AnonymousPlugin, } from '../../Type'
+import { AnonymousPlugin } from '../../Type'
 import { BotPlugin } from '../../Plugin/Plugin'
 import { Bot } from '../Bot'
 import path = require('path')
@@ -53,7 +53,7 @@ export class Plugin {
           mkdirSync(this.dirname)
         }
         let config = { plugin: {} }
-        this.list.forEach(plugin => {
+        this.list.forEach((plugin) => {
           if (plugin['config'] && Object.keys(plugin['config']).length > 0) {
             config.plugin[plugin.name] = plugin['config']
           }
@@ -72,7 +72,7 @@ export class Plugin {
   }
 
   getPlugin<T extends BotPlugin | AnonymousPlugin>(name: string): Omit<T, 'init'> | undefined {
-    const plugin = this.list.find(i => i.name === name)
+    const plugin = this.list.find((i) => i.name === name)
     if (plugin) {
       return plugin as T as Omit<T, 'init'>
     } else {

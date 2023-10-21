@@ -57,7 +57,7 @@ export class App {
         this.Bot.Log.logWarning(`已设置群聊黑名单，该白名单 ${list} 设置无效`)
       } else {
         if (this.whitelist.group) {
-          group_list.forEach(group_id => {
+          group_list.forEach((group_id) => {
             this.whitelist.group.add(group_id)
           })
         } else {
@@ -72,7 +72,7 @@ export class App {
         this.Bot.Log.logWarning(`已设置私聊黑名单，该白名单 ${list} 设置无效`)
       } else {
         if (this.whitelist.user) {
-          user_list.forEach(group_id => {
+          user_list.forEach((group_id) => {
             this.whitelist.user.add(group_id)
           })
         } else {
@@ -96,7 +96,7 @@ export class App {
         this.Bot.Log.logWarning(`已设置群聊白名单，该黑名单 ${list} 设置无效`)
       } else {
         if (this.blacklist.group) {
-          group_list.forEach(group_id => {
+          group_list.forEach((group_id) => {
             this.blacklist.group.add(group_id)
           })
         } else {
@@ -111,7 +111,7 @@ export class App {
         this.Bot.Log.logWarning(`已设置私聊白名单，该黑名单 ${list} 设置无效`)
       } else {
         if (this.blacklist.user) {
-          user_list.forEach(group_id => {
+          user_list.forEach((group_id) => {
             this.blacklist.user.add(group_id)
           })
         } else {
@@ -139,7 +139,7 @@ export class App {
    * 增加不输出log的群组
    */
   noLog(gorup_list: number[]): this {
-    gorup_list.forEach(group_id => {
+    gorup_list.forEach((group_id) => {
       this.Bot.Data.setNoLog(group_id)
     })
     return this
@@ -193,7 +193,7 @@ export class App {
       return
     }
     this.isStart = true
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this.Bot.Conn = new Connect(this.Bot.Data, ws)
       this.Bot.Conn.blacklist = this.blacklist
       this.Bot.Conn.whitelist = this.whitelist
@@ -202,23 +202,20 @@ export class App {
         this.Bot.Debug.debug = debug
         this.Bot.Api = new Api(this.Bot)
         this.Bot.Data.userId = (await this.Bot.Api.getLoginInfo()).user_id
-        this.getData()
-          .finally(() => {
-            schedule.scheduleJob('0 0 0 * * *', () => {
-              this.getData()
-            })
+        this.getData().finally(() => {
+          schedule.scheduleJob('0 0 0 * * *', () => {
+            this.getData()
           })
+        })
 
         this.Bot.Data.showLog = showLog
         this.Bot.Event = new Event(this.Bot)
-        this.Bot.Event
-          .on('ws.close', () => {
-            this.Bot.Log.logWarning(`${this.Bot.Data.name}已关闭`, 'WS')
-          })
-          .on('meta_event.heartbeat', async () => {
-            // 响应心跳连接
-            this.Bot.Api.getApiStatus()
-          })
+        this.Bot.Event.on('ws.close', () => {
+          this.Bot.Log.logWarning(`${this.Bot.Data.name}已关闭`, 'WS')
+        }).on('meta_event.heartbeat', async () => {
+          // 响应心跳连接
+          this.Bot.Api.getApiStatus()
+        })
         await this.initBot()
         this.Bot.Log.logNotice('应用已启动', 'Bot')
         resolve(this.Bot)
@@ -228,21 +225,20 @@ export class App {
 
   private async getData(): Promise<void> {
     this.Bot.Data.updateFriendList()
-    this.Bot.Data.updateGroupsList()
-      .then(() => {
-        this.Bot.Data.updateAllGroupMemberList()
-      })
+    this.Bot.Data.updateGroupsList().then(() => {
+      this.Bot.Data.updateAllGroupMemberList()
+    })
   }
 
   private initBot = async (): Promise<void> => {
-    this._pluginsList.forEach(item => {
+    this._pluginsList.forEach((item) => {
       if (item.class) {
         const _plugin = new (item.plugin as Plugin)(this.Bot)
         _plugin.setup(item.config)
         _plugin.setup = (): void => {
           this.Bot.Log.logWarning('请勿重复执行setup')
         }
-        if (this.Bot.Plugin.list.some(i => i.name === _plugin.name)) {
+        if (this.Bot.Plugin.list.some((i) => i.name === _plugin.name)) {
           this.Bot.Log.logWarning(`发现重名插件 ${white(_plugin.name)}`, '插件')
         }
         this.Bot.Plugin.list.push(_plugin)
@@ -258,7 +254,7 @@ export class App {
       const jsonPath = join(this.Bot.Plugin.dirname, `./${this.Bot.Plugin.filename}.json`)
       const ymlPath = join(this.Bot.Plugin.dirname, `./${this.Bot.Plugin.filename}.yml`)
       try {
-        let config: { config?: any, plugin?: any, bot?: any } = { plugin: {}, bot: {} }
+        let config: { config?: any; plugin?: any; bot?: any } = { plugin: {}, bot: {} }
         if (existsSync(jsonPath)) {
           config = readJSONSync(jsonPath)
           removeSync(jsonPath)

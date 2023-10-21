@@ -45,7 +45,7 @@ export enum LogColor {
    * 级别：致命错误
    * 颜色：品红
    */
-  FATAL,
+  FATAL
   /**
    * 级别：致命错误
    * 颜色：品红
@@ -53,7 +53,7 @@ export enum LogColor {
 }
 
 export class Log {
-  constructor(private name: string = '') { }
+  constructor(private name: string = '') {}
 
   private printLog(msg: string, level: LogColor = 0) {
     if (msg.length > 500) {
@@ -95,7 +95,10 @@ export class Log {
    * @param {string} content
    */
   sendLog(level: LogColor, content: string, type?: string) {
-    this.printLog(`${this.name ? `[${this.name}]` : ''}[${type || '日志'}] ${decode(content)}`, level)
+    this.printLog(
+      `${this.name ? `[${this.name}]` : ''}[${type || '日志'}] ${decode(content)}`,
+      level
+    )
   }
 
   /**

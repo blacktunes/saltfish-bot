@@ -22,8 +22,16 @@ export class CQCODE {
    * @param proxy 只在通过网络 URL 发送时有效, 表示是否通过代理下载文件 ( 需通过环境变量或配置文件配置代理 ) , 默认 1
    * @param timeout 只在通过网络 URL 发送时有效, 单位秒, 表示下载网络文件的超时时间 , 默认不超时
    */
-  record(file: string, magic: 0 | 1 = 0, cache: 0 | 1 = 1, proxy: 0 | 1 = 1, timeout?: number): string {
-    return `[CQ:record,file=${encode(file)}${magic === 1 ? ',magic=1' : ''}${cache === 0 ? ',cache=0' : ''}${proxy === 0 ? ',proxy=0' : ''}${timeout ? ',timeout=' + timeout : ''}]`
+  record(
+    file: string,
+    magic: 0 | 1 = 0,
+    cache: 0 | 1 = 1,
+    proxy: 0 | 1 = 1,
+    timeout?: number
+  ): string {
+    return `[CQ:record,file=${encode(file)}${magic === 1 ? ',magic=1' : ''}${
+      cache === 0 ? ',cache=0' : ''
+    }${proxy === 0 ? ',proxy=0' : ''}${timeout ? ',timeout=' + timeout : ''}]`
   }
 
   /**
@@ -33,7 +41,9 @@ export class CQCODE {
    * @param c 通过网络下载视频时的线程数, 默认单线程. (在资源不支持并发时会自动处理)
    */
   video(file: string, cover?: string, c?: 2 | 3): string {
-    return `[CQ:video,file=${encode(file)}${cover ? ',cover' + encode(cover) : ''}${c ? ',c=' + c : ''}]`
+    return `[CQ:video,file=${encode(file)}${cover ? ',cover' + encode(cover) : ''}${
+      c ? ',c=' + c : ''
+    }]`
   }
 
   /**
@@ -53,7 +63,9 @@ export class CQCODE {
    * @param image 分享的图片链接
    */
   share(url: string, title: string = '', content?: string, image?: string): string {
-    return `[CQ:share,url=${encode(url)},title=${encode(title)}${content ? `,content=${encode(content)}` : ''}${image ? `,image=${encode(image)}` : ''}]`
+    return `[CQ:share,url=${encode(url)},title=${encode(title)}${
+      content ? `,content=${encode(content)}` : ''
+    }${image ? `,image=${encode(image)}` : ''}]`
   }
 
   /**
@@ -74,7 +86,9 @@ export class CQCODE {
    * @param image 发送时可选, 图片 URL
    */
   customMusic(url: string, audio: string, title: string, content?: string, image?: string): string {
-    return `[CQ:music,type=custom,url=${encode(url)},audio=${encode(audio)},title=${encode(title)}${content ? `,content=${encode(content)}` : ''}${image ? `,image=${encode(image)}` : ''}]`
+    return `[CQ:music,type=custom,url=${encode(url)},audio=${encode(audio)},title=${encode(title)}${
+      content ? `,content=${encode(content)}` : ''
+    }${image ? `,image=${encode(image)}` : ''}]`
   }
 
   /**
@@ -85,11 +99,21 @@ export class CQCODE {
    * @param id 发送秀图时的特效id，默认为40000
    * @param c 通过网络下载图片时的线程数, 默认单线程. (在资源不支持并发时会自动处理)
    */
-  image(file: string, cache: 0 | 1 = 1, type?: 'flash' | 'show', id: 40000 | 40001 | 40002 | 40003 | 40004 | 40005 = 40000, c?: 2 | 3): string {
+  image(
+    file: string,
+    cache: 0 | 1 = 1,
+    type?: 'flash' | 'show',
+    id: 40000 | 40001 | 40002 | 40003 | 40004 | 40005 = 40000,
+    c?: 2 | 3
+  ): string {
     if (type === 'flash') {
-      return `[CQ:image,file=${encode(file)},type=flash${cache === 0 ? ',cache=0' : ''}${c ? ',c=' + c : ''}]`
+      return `[CQ:image,file=${encode(file)},type=flash${cache === 0 ? ',cache=0' : ''}${
+        c ? ',c=' + c : ''
+      }]`
     } else if (type === 'show') {
-      return `[CQ:image,file=${encode(file)},type=show,id=${id}${cache === 0 ? ',cache=0' : ''}${c ? ',c=' + c : ''}]`
+      return `[CQ:image,file=${encode(file)},type=show,id=${id}${cache === 0 ? ',cache=0' : ''}${
+        c ? ',c=' + c : ''
+      }]`
     } else {
       return `[CQ:image,file=${encode(file)}${cache === 0 ? ',cache=0' : ''}${c ? ',c=' + c : ''}]`
     }
@@ -111,7 +135,9 @@ export class CQCODE {
    * @param seq 起始消息序号, 可通过 get_msg 获得
    */
   customReply(text: string, qq: number, time?: number, seq?: number): string {
-    return `[CQ:reply,text=${encode(text)},qq=${qq}${time ? `,time=${time}` : ''}${seq ? `,seq=${seq}` : ''}]`
+    return `[CQ:reply,text=${encode(text)},qq=${qq}${time ? `,time=${time}` : ''}${
+      seq ? `,seq=${seq}` : ''
+    }]`
   }
 
   /**
@@ -221,8 +247,20 @@ export class CQCODE {
    * @param source 分享来源的名称，可以留空
    * @param icon 分享来源的icon图标url，可以留空
    */
-  cardimage(file: string, minwidth: number = 400, minheight: number = 400, maxwidth: number = 500, maxheight: number = 1000, source: string = '', icon: string = ''): string {
-    return `[CQ:cardimage,file=${encode(file)},minwidth=${minwidth},minheight=${minheight},maxwidth=${maxwidth},maxheight=${maxheight},source=${encode(source)},icon=${encode(icon)}]`
+  cardimage(
+    file: string,
+    minwidth: number = 400,
+    minheight: number = 400,
+    maxwidth: number = 500,
+    maxheight: number = 1000,
+    source: string = '',
+    icon: string = ''
+  ): string {
+    return `[CQ:cardimage,file=${encode(
+      file
+    )},minwidth=${minwidth},minheight=${minheight},maxwidth=${maxwidth},maxheight=${maxheight},source=${encode(
+      source
+    )},icon=${encode(icon)}]`
   }
 
   /**
@@ -235,4 +273,4 @@ export class CQCODE {
   }
 }
 
-export const CQCode = new CQCODE
+export const CQCode = new CQCODE()

@@ -1,11 +1,11 @@
-import { Data } from '../Bot/modules/Data';
+import { Data } from '../Bot/modules/Data'
 import { white } from 'colors'
 import { w3cwebsocket } from 'websocket'
 import { ApiRes, Prevent, WebSocketConfig } from '..'
 import { decode, PrintLog } from '../Tools'
 import { GroupMsg, PrivateMsg, _GroupMsg, _PrivateMsg } from '../Type'
 
-type MessageEvent = { type: string, fn: (data: any) => Prevent }
+type MessageEvent = { type: string; fn: (data: any) => Prevent }
 
 interface NextMessageEvent {
   message_id: number
@@ -60,7 +60,10 @@ export class Connect {
     user?: Set<number>
   } = {}
 
-  private setNextMessage = (data: PrivateMsg | GroupMsg, event: MessageEvent | NextMessageEvent) => {
+  private setNextMessage = (
+    data: PrivateMsg | GroupMsg,
+    event: MessageEvent | NextMessageEvent
+  ) => {
     return (fn: (msg: string, event: any, prevEvent: any) => Prevent) => {
       const id = this.nextMessageID
       ++this.nextMessageID
@@ -94,7 +97,10 @@ export class Connect {
           if (flag) return
         }
       } else if (this.nextMessageEventList[i].type === 'message.group') {
-        if (this.nextMessageEventList[i].user_id === data.sender.user_id && this.nextMessageEventList[i].group_id === data.group_id) {
+        if (
+          this.nextMessageEventList[i].user_id === data.sender.user_id &&
+          this.nextMessageEventList[i].group_id === data.group_id
+        ) {
           const flag = await this.nextMessageEventList[i].fn(data)
           delete this.nextMessageEventList[i]
           if (flag) return
@@ -124,7 +130,11 @@ export class Connect {
     if (this.client) {
       this.client.close()
     }
-    this.client = new w3cwebsocket(`${this.wss ? 'wss' : 'ws'}://${this.host}:${this.port}${this.accessToken ? '?access_token=' + this.accessToken : ''}`)
+    this.client = new w3cwebsocket(
+      `${this.wss ? 'wss' : 'ws'}://${this.host}:${this.port}${
+        this.accessToken ? '?access_token=' + this.accessToken : ''
+      }`
+    )
     this.client.onopen = () => {
       if (this.connectTimes > 0) {
         PrintLog.logNotice(`第${this.connectTimes}次重新链接成功`, this.name)
@@ -135,13 +145,13 @@ export class Connect {
         this.ready()
         delete this.ready
       }
-      this.connEventList.forEach(fn => {
+      this.connEventList.forEach((fn) => {
         fn()
       })
       this.connectTimes = 0
       this.client.onclose = () => {
         PrintLog.logWarning('websocket连接已断开', this.name)
-        this.closeEventList.forEach(fn => {
+        this.closeEventList.forEach((fn) => {
           fn()
         })
         if (this.reconnection) {
@@ -151,7 +161,7 @@ export class Connect {
       }
     }
     this.client.onmessage = async (message) => {
-      const data = JSON.parse(decode((JSON.stringify(JSON.parse(message.data.toString())))))
+      const data = JSON.parse(decode(JSON.stringify(JSON.parse(message.data.toString()))))
       if (data.group_id && this.isSkip('group', data.group_id)) return
       if (data.user_id && this.isSkip('private', data.user_id)) return
       if (data.post_type) {
@@ -193,7 +203,7 @@ export class Connect {
       } else {
         PrintLog.logFatal('websocket发生错误', this.name)
       }
-      this.errorEventList.forEach(fn => {
+      this.errorEventList.forEach((fn) => {
         fn(error)
       })
       if (!this.reconnection) return
@@ -216,12 +226,12 @@ export class Connect {
     meta_event: MessageEvent[]
     other: MessageEvent[]
   } = {
-      message: [],
-      notice: [],
-      request: [],
-      meta_event: [],
-      other: []
-    }
+    message: [],
+    notice: [],
+    request: [],
+    meta_event: [],
+    other: []
+  }
   private messageLogEvent: MessageEvent[] = []
   private nextMessageEventList: {
     [id: number]: NextMessageEvent
@@ -278,7 +288,7 @@ export class Connect {
   }
 
   private getRes = (id: number, apiName: string, params: any = {}) => {
-    return new Promise<ApiRes>(resolve => {
+    return new Promise<ApiRes>((resolve) => {
       // let timer = setTimeout(() => {
       //   resolve({
       //     retcode: 408,
@@ -312,7 +322,7 @@ export class Connect {
     return this.messageEventList.message.length
   }
 
-  private APIList = new Map<number, { fn: Function, info: any }>()
+  private APIList = new Map<number, { fn: Function; info: any }>()
   /**
    * 获取队列中未完成的消息数量
    */
@@ -327,14 +337,21 @@ export class Connect {
   async useAPI(apiName: string, params?: any, errorLog: boolean = true): Promise<ApiRes> {
     if (this.isConnect()) {
       const id = this.messageID
-      this.client.send(JSON.stringify({
-        action: apiName,
-        params,
-        echo: id
-      }))
+      this.client.send(
+        JSON.stringify({
+          action: apiName,
+          params,
+          echo: id
+        })
+      )
       const res = await this.getRes(id, apiName, params)
       if (errorLog && res.status !== 'ok') {
-        PrintLog.logError(`${white(apiName)} 调用失败 recode: ${white(res.retcode.toString())} msg: ${white(res.msg || '未知错误')}`, this.name)
+        PrintLog.logError(
+          `${white(apiName)} 调用失败 recode: ${white(res.retcode.toString())} msg: ${white(
+            res.msg || '未知错误'
+          )}`,
+          this.name
+        )
       }
       return res
     } else {

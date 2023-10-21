@@ -1,7 +1,32 @@
-import { Bot, BotPlugin, ClientStatus, Essence, Friend, FriendAdd, FriendRecall, Group, GroupAdmin, GroupBan, GroupCard, GroupDecrease, GroupIncrease, GroupMsg, GroupNotify, GroupRecall, GroupUpload, Message, OfflineFile, Prevent, PrivateMsg } from '..'
+import {
+  Bot,
+  BotPlugin,
+  ClientStatus,
+  Essence,
+  Friend,
+  FriendAdd,
+  FriendRecall,
+  Group,
+  GroupAdmin,
+  GroupBan,
+  GroupCard,
+  GroupDecrease,
+  GroupIncrease,
+  GroupMsg,
+  GroupNotify,
+  GroupRecall,
+  GroupUpload,
+  Message,
+  OfflineFile,
+  Prevent,
+  PrivateMsg
+} from '..'
 
 export class Event {
-  constructor(private group: string, private Bot: Bot) { }
+  constructor(
+    private group: string,
+    private Bot: Bot
+  ) {}
 
   /**
    * WS链接或断开

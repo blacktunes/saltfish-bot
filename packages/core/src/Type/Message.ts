@@ -80,7 +80,11 @@ export interface HonorItem {
      */
     emotion_list: Honor[]
   }
-  all: HonorItem['talkative'] & HonorItem['performer'] & HonorItem['legend'] & HonorItem['strong_newbie'] & HonorItem['emotion']
+  all: HonorItem['talkative'] &
+    HonorItem['performer'] &
+    HonorItem['legend'] &
+    HonorItem['strong_newbie'] &
+    HonorItem['emotion']
 }
 
 export interface CurrentTalkative {

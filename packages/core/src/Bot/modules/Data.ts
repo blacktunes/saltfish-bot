@@ -40,7 +40,7 @@ export class Data {
    */
   async updateGroupsList(): Promise<void> {
     const list = await this.Bot.Api.getGroupList()
-    list.forEach(group => {
+    list.forEach((group) => {
       this.groupList[group.group_id] = group.group_name
     })
     this.Bot.Log.logNotice('群名缓存已更新', '缓存')
@@ -66,7 +66,7 @@ export class Data {
   async updateGroupMemberList(group_id: number): Promise<void> {
     const list = await this.Bot.Api.getGroupMemberList(group_id)
     this.groupMemberList[group_id] = {}
-    list.forEach(user => {
+    list.forEach((user) => {
       this.groupMemberList[group_id][user.user_id] = user.card || user.nickname
     })
   }
@@ -94,7 +94,7 @@ export class Data {
   } = {}
   async updateFriendList(): Promise<void> {
     const list = await this.Bot.Api.getFriendList()
-    list.forEach(user => {
+    list.forEach((user) => {
       this.friendList[user.user_id] = user.remark || user.nickname
     })
     this.Bot.Log.logNotice('好友昵称缓存已更新', '缓存')

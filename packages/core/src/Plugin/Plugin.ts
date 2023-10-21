@@ -34,10 +34,13 @@ export abstract class BotPlugin {
       if (this.blacklist.group) {
         const pluginName = magenta(this.name)
         const list = magenta(group_list.toString())
-        this.Bot.Log.logWarning(`${pluginName} 已设置群聊黑名单，该白名单 ${list} 设置无效`, this.name)
+        this.Bot.Log.logWarning(
+          `${pluginName} 已设置群聊黑名单，该白名单 ${list} 设置无效`,
+          this.name
+        )
       } else {
         if (this.whitelist.group) {
-          group_list.forEach(group_id => {
+          group_list.forEach((group_id) => {
             this.whitelist.group.add(group_id)
           })
         } else {
@@ -50,10 +53,13 @@ export abstract class BotPlugin {
       if (this.blacklist.user) {
         const pluginName = magenta(this.name)
         const list = magenta(user_list.toString())
-        this.Bot.Log.logWarning(`${pluginName} 已设置私聊黑名单，该白名单 ${list} 设置无效`, this.name)
+        this.Bot.Log.logWarning(
+          `${pluginName} 已设置私聊黑名单，该白名单 ${list} 设置无效`,
+          this.name
+        )
       } else {
         if (this.whitelist.user) {
-          user_list.forEach(group_id => {
+          user_list.forEach((group_id) => {
             this.whitelist.user.add(group_id)
           })
         } else {
@@ -80,10 +86,13 @@ export abstract class BotPlugin {
       if (this.whitelist.group) {
         const pluginName = magenta(this.name)
         const list = magenta(group_list.toString())
-        this.Bot.Log.logWarning(`${pluginName} 已设置群聊白名单，该黑名单 ${list} 设置无效`, this.name)
+        this.Bot.Log.logWarning(
+          `${pluginName} 已设置群聊白名单，该黑名单 ${list} 设置无效`,
+          this.name
+        )
       } else {
         if (this.blacklist.group) {
-          group_list.forEach(group_id => {
+          group_list.forEach((group_id) => {
             this.blacklist.group.add(group_id)
           })
         } else {
@@ -96,10 +105,13 @@ export abstract class BotPlugin {
       if (this.whitelist.user) {
         const pluginName = magenta(this.name)
         const list = magenta(user_list.toString())
-        this.Bot.Log.logWarning(`${pluginName} 已设置私聊白名单，该黑名单 ${list} 设置无效`, this.name)
+        this.Bot.Log.logWarning(
+          `${pluginName} 已设置私聊白名单，该黑名单 ${list} 设置无效`,
+          this.name
+        )
       } else {
         if (this.blacklist.user) {
-          user_list.forEach(group_id => {
+          user_list.forEach((group_id) => {
             this.blacklist.user.add(group_id)
           })
         } else {
@@ -120,7 +132,7 @@ export abstract class BotPlugin {
    */
   protected Command = {
     command: (name: string) => {
-      const repeat = this.Bot.Command.list.some(item => {
+      const repeat = this.Bot.Command.list.some((item) => {
         return item.comm.includes(name)
       })
       if (repeat) {
@@ -160,14 +172,14 @@ export abstract class BotPlugin {
     }
     this.Event = new Event(this.name, this.Bot)
     this.Log = new Log(`插件: ${this.name}`)
-    this.setup = () => { }
+    this.setup = () => {}
   }
 
   /**
    * 初始化方法
    * 该方法会在Bot初始化完成后执行
    */
-  init(): void | Promise<void> { }
+  init(): void | Promise<void> {}
   private deepProxy(obj: { [key: string]: any }) {
     if (typeof obj === 'object') {
       for (let key in obj) {
@@ -207,6 +219,6 @@ export abstract class BotPlugin {
         this._config = value
       }
     })
-    this.autoSave = () => { }
+    this.autoSave = () => {}
   }
 }
