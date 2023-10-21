@@ -1,4 +1,4 @@
-import { getImg } from '@saltfish-bot/puppeteer'
+import { htmlToImage } from '@saltfish-bot/puppeteer'
 import { cpu, mem } from 'node-os-utils'
 import { BotPlugin, secondsFormat } from 'saltfish-bot'
 import path = require('path')
@@ -14,7 +14,7 @@ export default class System extends BotPlugin {
       .action('group', async (e) => {
         const cpuUsage = await cpu.usage()
         const memInfo = await mem.info()
-        const img = await getImg(`file://${path.join(__dirname, 'index.html')}`, {
+        const img = await htmlToImage(`file://${path.join(__dirname, 'index.html')}`, {
           name: this.Bot.Data.name,
           time: secondsFormat(Math.floor(process.uptime())),
           plugin: this.Bot.Plugin.list.length,
