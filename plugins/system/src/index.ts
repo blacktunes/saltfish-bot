@@ -7,14 +7,14 @@ export default class System extends BotPlugin {
   name = 'system'
 
   init = () => {
-    this.Command.command('#sys')
+    this.Command.command('#system')
       .alias('#服务器状态')
       .admin()
       .desc('查询服务器状态')
       .action('group', async (e) => {
         const cpuUsage = await cpu.usage()
         const memInfo = await mem.info()
-        const img = await htmlToImage(`file://${path.join(__dirname, 'index.html')}`, {
+        const img = await htmlToImage(`file://${path.join(__dirname, 'system.html')}`, {
           name: this.Bot.Data.name,
           time: secondsFormat(Math.floor(process.uptime())),
           plugin: this.Bot.Plugin.list.length,
