@@ -17,7 +17,20 @@ export abstract class BotPlugin {
   private _configProxy: { [key: string]: any }
 
   /** 插件设置 */
-  config: { [key: string]: any } = {}
+  config: {
+    /** 是否加载插件 */
+    enabled?: boolean
+    /** 是否自动保存修改的配置 */
+    auto_save?: boolean
+    whitelist?: {
+      group?: number[]
+      user?: number[]
+    }
+    blacklist?: {
+      group?: number[]
+      user?: number[]
+    }
+  } & { [key: string]: any } = {}
 
   /** 白名单 */
   whitelist: {
@@ -29,16 +42,13 @@ export abstract class BotPlugin {
    * @param group_list 群聊白名单
    * @param user_list 私聊白名单
    */
-  white(group_list?: number[], user_list?: number[]) {
+  readonly white = (group_list?: number[], user_list?: number[]) => {
     if (group_list) {
+      const list = group_list.toString()
       if (this.blacklist.group) {
-        const pluginName = magenta(this.name)
-        const list = magenta(group_list.toString())
-        this.Bot.Log.logWarning(
-          `${pluginName} 已设置群聊黑名单，该白名单 ${list} 设置无效`,
-          this.name
-        )
+        this.Bot.Log.logWarning(`已设置群聊黑名单，该白名单 ${magenta(list)} 设置无效`, this.name)
       } else {
+        this.Bot.Log.logNotice(`白名单已添加 ${yellow(list)}`, this.name)
         if (this.whitelist.group) {
           group_list.forEach((group_id) => {
             this.whitelist.group.add(group_id)
@@ -50,14 +60,11 @@ export abstract class BotPlugin {
     }
 
     if (user_list) {
+      const list = user_list.toString()
       if (this.blacklist.user) {
-        const pluginName = magenta(this.name)
-        const list = magenta(user_list.toString())
-        this.Bot.Log.logWarning(
-          `${pluginName} 已设置私聊黑名单，该白名单 ${list} 设置无效`,
-          this.name
-        )
+        this.Bot.Log.logWarning(`已设置私聊黑名单，该白名单 ${magenta(list)} 设置无效`, this.name)
       } else {
+        this.Bot.Log.logNotice(`白名单已添加 ${yellow(list)}`, this.name)
         if (this.whitelist.user) {
           user_list.forEach((group_id) => {
             this.whitelist.user.add(group_id)
@@ -81,16 +88,13 @@ export abstract class BotPlugin {
    * @param group_list 群聊黑名单
    * @param user_list 私聊黑名单
    */
-  black(group_list?: number[], user_list?: number[]) {
+  readonly black = (group_list?: number[], user_list?: number[]) => {
     if (group_list) {
+      const list = group_list.toString()
       if (this.whitelist.group) {
-        const pluginName = magenta(this.name)
-        const list = magenta(group_list.toString())
-        this.Bot.Log.logWarning(
-          `${pluginName} 已设置群聊白名单，该黑名单 ${list} 设置无效`,
-          this.name
-        )
+        this.Bot.Log.logWarning(`已设置群聊白名单，该黑名单 ${magenta(list)} 设置无效`, this.name)
       } else {
+        this.Bot.Log.logNotice(`黑名单已添加 ${yellow(list)}`, this.name)
         if (this.blacklist.group) {
           group_list.forEach((group_id) => {
             this.blacklist.group.add(group_id)
@@ -102,14 +106,11 @@ export abstract class BotPlugin {
     }
 
     if (user_list) {
+      const list = user_list.toString()
       if (this.whitelist.user) {
-        const pluginName = magenta(this.name)
-        const list = magenta(user_list.toString())
-        this.Bot.Log.logWarning(
-          `${pluginName} 已设置私聊白名单，该黑名单 ${list} 设置无效`,
-          this.name
-        )
+        this.Bot.Log.logWarning(`已设置私聊白名单，该黑名单 ${magenta(list)} 设置无效`, this.name)
       } else {
+        this.Bot.Log.logNotice(`黑名单已添加 ${yellow(list)}`, this.name)
         if (this.blacklist.user) {
           user_list.forEach((group_id) => {
             this.blacklist.user.add(group_id)
@@ -172,6 +173,12 @@ export abstract class BotPlugin {
     }
     this.Event = new Event(this.name, this.Bot)
     this.Log = new Log(`插件: ${this.name}`)
+    if (this.config.whitelist?.group || this.config.whitelist?.user) {
+      this.white(this.config.whitelist?.group, this.config.whitelist?.user)
+    }
+    if (this.config.blacklist?.group || this.config.blacklist?.user) {
+      this.black(this.config.blacklist?.group, this.config.blacklist?.user)
+    }
     this.setup = () => {}
   }
 

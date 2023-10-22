@@ -185,9 +185,9 @@ export class App {
    * 启动函数
    * @param ws 链接设置
    * @param debug 是否开启debug
-   * @param showLog 是否在控制台输出日志
+   * @param log 是否在控制台输出日志
    */
-  start(ws: WebSocketConfig = {}, debug = false, showLog: boolean = true): Promise<Bot> {
+  start(ws: WebSocketConfig = {}, debug = false, log: boolean = true): Promise<Bot> {
     if (this.isStart) {
       this.Bot.Log.logWarning('请勿重复启动', 'Bot')
       return
@@ -208,7 +208,7 @@ export class App {
           })
         })
 
-        this.Bot.Data.showLog = showLog
+        this.Bot.Data.showLog = log
         this.Bot.Event = new Event(this.Bot)
         this.Bot.Event.on('ws.close', () => {
           this.Bot.Log.logWarning(`${this.Bot.Data.name}已关闭`, 'WS')
@@ -235,9 +235,6 @@ export class App {
       if (item.class) {
         const _plugin = new (item.plugin as Plugin)(this.Bot)
         _plugin.setup(item.config)
-        _plugin.setup = (): void => {
-          this.Bot.Log.logWarning('请勿重复执行setup')
-        }
         if (this.Bot.Plugin.list.some((i) => i.name === _plugin.name)) {
           this.Bot.Log.logWarning(`发现重名插件 ${white(_plugin.name)}`, '插件')
         }
@@ -307,13 +304,9 @@ export class App {
           } else {
             this.Bot.Log.logWarning(`${white(plugin.name)} 已被禁用`, '插件')
           }
-          plugin.autoSave = (): void => {
-            this.Bot.Log.logWarning('请勿重复执行autoSave')
-          }
+          plugin.autoSave = () => {}
         }
-        plugin.init = (): void => {
-          this.Bot.Log.logWarning('请勿重复执行init')
-        }
+        plugin.init = () => {}
       }
       this.Bot.Log.logNotice('插件初始化完成')
     }

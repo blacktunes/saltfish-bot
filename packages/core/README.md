@@ -1,3 +1,3 @@
 # @saltfish-bot/core
 
-https://www.npmjs.com/package/saltfish-bot
+https://github.com/blacktunes/saltfish-bot
