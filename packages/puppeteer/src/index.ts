@@ -36,14 +36,14 @@ export const htmlToImage = async (
     height: 1440
   },
   /** 其它设置 */
-  options?: {
+  options: {
     /** Navigation Parameter */
     page_option?: puppeteer.WaitForOptions
     /** 截图设置 */
     screenshot_option?: Omit<puppeteer.ScreenshotOptions, 'encoding'>
     /** 网页的console事件 */
     log_cb?: (e: puppeteer.ConsoleMessage) => void
-  }
+  } = {}
 ) => {
   if (!browser) {
     const time = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
