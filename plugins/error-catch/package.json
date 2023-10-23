@@ -2,6 +2,7 @@
   "name": "@saltfish-bot/plugin-error-catch",
   "version": "0.1.0",
   "main": "dist/index.js",
+  "repository": "https://github.com/blacktunes/saltfish-bot/tree/master/plugins/error-catch",
   "scripts": {
     "type-check": "tsc --noEmit -p tsconfig.json --composite false",
     "format": "prettier --write . --ignore-path .gitignore",

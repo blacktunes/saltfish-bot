@@ -2,6 +2,7 @@
   "name": "saltfish-bot",
   "version": "0.0.3",
   "main": "dist/index.js",
+  "repository": "https://github.com/blacktunes/saltfish-bot",
   "scripts": {
     "type-check": "tsc --noEmit -p tsconfig.json --composite false",
     "format": "prettier --write . --ignore-path .gitignore",

@@ -2,6 +2,7 @@
   "name": "@saltfish-bot/puppeteer",
   "version": "0.0.3",
   "main": "dist/index.js",
+  "repository": "https://github.com/blacktunes/saltfish-bot/tree/master/packages/puppeteer",
   "scripts": {
     "type-check": "tsc --noEmit -p tsconfig.json --composite false",
     "format": "prettier --write . --ignore-path .gitignore",

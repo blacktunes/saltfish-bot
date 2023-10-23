@@ -2,6 +2,7 @@
   "name": "@saltfish-bot/plugin-script",
   "version": "0.0.1",
   "main": "dist/index.js",
+  "repository": "https://github.com/blacktunes/saltfish-bot/tree/master/plugins/script",
   "scripts": {
     "type-check": "tsc --noEmit -p tsconfig.json --composite false",
     "format": "prettier --write . --ignore-path .gitignore",
@@ -9,7 +10,5 @@
   },
   "dependencies": {
     "saltfish-bot": "workspace:^"
-  },
-  "devDependencies": {
   }
 }
