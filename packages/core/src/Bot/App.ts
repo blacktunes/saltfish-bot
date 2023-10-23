@@ -295,7 +295,7 @@ export class App {
             this.Bot.Log.logError(`${yellow(plugin.name)} 加载失败`, '插件')
           }
         } else {
-          if (plugin.config.enable === undefined || plugin.config.enable) {
+          if (plugin.config.enabled === undefined || plugin.config.enabled) {
             await plugin.init()
             if (plugin.config.auto_save === undefined || plugin.config.auto_save) {
               plugin.autoSave()

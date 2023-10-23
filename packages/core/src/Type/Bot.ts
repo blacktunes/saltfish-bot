@@ -7,13 +7,6 @@ import { BotPlugin } from '../Plugin/Plugin'
  */
 export type Prevent = Promise<boolean | void> | boolean | void
 
-export interface PluginConfig {
-  [key: string]: any
-  config: {
-    [key: string]: any
-  }
-}
-
 export interface Plugin {
   new (bot: Bot, config?: any): BotPlugin
 }

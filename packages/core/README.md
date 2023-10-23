@@ -1,3 +1,9 @@
 # @saltfish-bot/core
 
-https://github.com/blacktunes/saltfish-bot
+```ts
+import App from 'saltfish-bot'
+
+const app = new App()
+app.start()
+
+```

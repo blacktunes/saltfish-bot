@@ -1,5 +1,6 @@
 import { magenta, white, yellow } from 'colors'
 import { merge } from 'lodash'
+import { PluginConfig } from '..'
 import { Bot } from '../Bot/Bot'
 import { Comm, SetComm, setCommLister } from '../Bot/modules/Command'
 import { Log } from '../Tools'
@@ -17,20 +18,7 @@ export abstract class BotPlugin {
   private _configProxy: { [key: string]: any }
 
   /** 插件设置 */
-  config: {
-    /** 是否加载插件 */
-    enabled?: boolean
-    /** 是否自动保存修改的配置 */
-    auto_save?: boolean
-    whitelist?: {
-      group?: number[]
-      user?: number[]
-    }
-    blacklist?: {
-      group?: number[]
-      user?: number[]
-    }
-  } & { [key: string]: any } = {}
+  config: PluginConfig = {}
 
   /** 白名单 */
   whitelist: {
