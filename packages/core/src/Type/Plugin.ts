@@ -1,4 +1,3 @@
-
 interface PluginDefaultConfig {
   /** 是否加载插件 */
   enabled?: boolean

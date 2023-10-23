@@ -127,14 +127,18 @@ export class SetComm {
     if (this.repeat) return this
 
     if (group_list) {
+      const list = magenta(group_list.toString())
+      const commName = magenta(this.comm.comm[0])
       if (this.comm.blacklist.group) {
-        const commName = magenta(this.comm.comm[0])
-        const list = magenta(group_list.toString())
         this.Bot.Log.logWarning(
           `${commName} 已设置群聊黑名单，该白名单 ${list} 设置无效`,
           this.plugin ? '插件' : 'Admin'
         )
       } else {
+        this.Bot.Log.logNotice(
+          `${commName} 白名单已添加 ${yellow(list)}`,
+          this.plugin ? '插件' : 'Admin'
+        )
         if (this.comm.whitelist.group) {
           group_list.forEach((group_id) => {
             this.comm.whitelist.group.add(group_id)
@@ -146,14 +150,18 @@ export class SetComm {
     }
 
     if (user_list) {
+      const list = magenta(user_list.toString())
+      const commName = magenta(this.comm.comm[0])
       if (this.comm.blacklist.user) {
-        const commName = magenta(this.comm.comm[0])
-        const list = magenta(user_list.toString())
         this.Bot.Log.logWarning(
           `${commName} 已设置私聊黑名单，该白名单 ${list} 设置无效`,
           this.plugin ? '插件' : 'Admin'
         )
       } else {
+        this.Bot.Log.logNotice(
+          `${commName} 白名单已添加 ${yellow(list)}`,
+          this.plugin ? '插件' : 'Admin'
+        )
         if (this.comm.whitelist.user) {
           user_list.forEach((group_id) => {
             this.comm.whitelist.user.add(group_id)
@@ -175,14 +183,18 @@ export class SetComm {
     if (this.repeat) return this
 
     if (group_list) {
+      const commName = magenta(this.comm.comm[0])
+      const list = magenta(group_list.toString())
       if (this.comm.whitelist.group) {
-        const commName = magenta(this.comm.comm[0])
-        const list = magenta(group_list.toString())
         this.Bot.Log.logWarning(
           `${commName} 已设置群聊白名单，该黑名单 ${list} 设置无效`,
           this.plugin ? '插件' : 'Admin'
         )
       } else {
+        this.Bot.Log.logNotice(
+          `${commName} 黑名单已添加 ${yellow(list)}`,
+          this.plugin ? '插件' : 'Admin'
+        )
         if (this.comm.blacklist.group) {
           group_list.forEach((group_id) => {
             this.comm.blacklist.group.add(group_id)
@@ -194,14 +206,18 @@ export class SetComm {
     }
 
     if (user_list) {
+      const commName = magenta(this.comm.comm[0])
+      const list = magenta(user_list.toString())
       if (this.comm.whitelist.user) {
-        const commName = magenta(this.comm.comm[0])
-        const list = magenta(user_list.toString())
         this.Bot.Log.logWarning(
           `${commName} 已设置私聊白名单，该黑名单 ${list} 设置无效`,
           this.plugin ? '插件' : 'Admin'
         )
       } else {
+        this.Bot.Log.logNotice(
+          `${commName} 黑名单已添加 ${yellow(list)}`,
+          this.plugin ? '插件' : 'Admin'
+        )
         if (this.comm.blacklist.user) {
           user_list.forEach((group_id) => {
             this.comm.blacklist.user.add(group_id)
