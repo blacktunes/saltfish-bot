@@ -1,15 +1,26 @@
 import { htmlToImage } from '@saltfish-bot/puppeteer'
 import { cpu, mem } from 'node-os-utils'
-import { BotPlugin, secondsFormat } from 'saltfish-bot'
+import { BotPlugin, PluginConfig, secondsFormat } from 'saltfish-bot'
 import path = require('path')
+
+interface Config {
+  // 触发命令
+  command?: string
+  // 是否需要管理员
+  admin?: boolean
+}
 
 export default class System extends BotPlugin {
   name = 'system'
 
+  config: PluginConfig<Config> = {
+    command: '#system',
+    admin: true
+  }
+
   init = () => {
-    this.Command.command('#system')
-      .alias('#服务器状态')
-      .admin()
+    this.Command.command(this.config.command)
+      .admin(this.config.admin)
       .desc('查询服务器状态')
       .action('group', async (e) => {
         const cpuUsage = await cpu.usage()
