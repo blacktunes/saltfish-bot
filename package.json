@@ -7,7 +7,7 @@
     "format": "lerna run format",
     "build": "lerna run build",
     "watch": "lerna watch -- lerna run build --include-dependents",
-    "publish": "lerna run type-check && lerna run build && lerna publish"
+    "publish": "lerna run check && lerna publish"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.8.0",
