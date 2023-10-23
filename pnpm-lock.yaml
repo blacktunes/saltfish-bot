@@ -91,6 +91,12 @@ importers:
         specifier: ^21.2.1
         version: 21.2.1(typescript@5.2.2)
 
+  plugins/error-catch:
+    dependencies:
+      saltfish-bot:
+        specifier: workspace:^
+        version: link:../../packages/core
+
   plugins/system:
     dependencies:
       '@saltfish-bot/puppeteer':
@@ -109,6 +115,9 @@ importers:
 
   test:
     dependencies:
+      '@saltfish-bot/plugin-error-catch':
+        specifier: workspace:^
+        version: link:../plugins/error-catch
       '@saltfish-bot/plugin-system':
         specifier: workspace:^
         version: link:../plugins/system
@@ -928,6 +937,7 @@ packages:
 
   /@types/node@20.6.1:
     resolution: {integrity: sha512-4LcJvuXQlv4lTHnxwyHQZ3uR9Zw2j7m1C9DfuwoTFQQP4Pmu04O6IfLYgMmHoOCt0nosItLLZAH+sOrRE0Bo8g==}
+    requiresBuild: true
     dev: false
     optional: true
 
@@ -3259,6 +3269,7 @@ packages:
   /iconv-lite@0.6.3:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
     engines: {node: '>=0.10.0'}
+    requiresBuild: true
     dependencies:
       safer-buffer: 2.1.2
     dev: true

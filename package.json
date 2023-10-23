@@ -3,6 +3,7 @@
   "scripts": {
     "dev": "nodemon --ext js,ts --watch test/src --exec ts-node test/src",
     "type-check": "lerna run type-check",
+    "check": "lerna run build && lerna run type-check",
     "format": "lerna run format",
     "build": "lerna run build",
     "watch": "lerna watch -- lerna run build --include-dependents",
