@@ -1,10 +1,10 @@
 import { existsSync, mkdirSync } from 'fs-extra'
+import { merge } from 'lodash'
 import { readSync, writeSync } from 'node-yaml'
-import { AnonymousPlugin } from '../../Type'
 import { BotPlugin } from '../../Plugin/Plugin'
+import { AnonymousPlugin } from '../../Type'
 import { Bot } from '../Bot'
 import path = require('path')
-import { merge } from 'lodash'
 
 export class Plugin {
   constructor(bot: Bot, dir: string, filename: string) {
@@ -22,21 +22,21 @@ export class Plugin {
   /** 本地设置文件名 */
   readonly filename: string
 
-  setConfig(name: string, config: any) {
+  setConfig(name: string, config: { [name: string]: any }) {
     const plugin = this.getPlugin(name)
     if (plugin && plugin.name === name) {
       plugin['config'] = merge(plugin['config'], config)
     }
   }
 
-  getConfig<T>(name: string): T | any
-  getConfig<T extends { [key: string]: any }, K extends string>(name: string, key: K): T[K]
+  getConfig<T extends BotPlugin>(name: string): T['config']
+  getConfig<T extends BotPlugin, K extends keyof T['config']>(name: string, key: K): T['config'][K]
   getConfig(name: string, key?: string) {
-    const plugin = this.getPlugin(name)
+    const plugin = this.getPlugin<BotPlugin>(name)
     if (key) {
-      return plugin && plugin['config'] && plugin['config'][key] ? plugin['config'][key] : null
+      return plugin && plugin.config && plugin.config[key] ? plugin.config[key] : null
     } else {
-      return plugin && plugin['config'] ? plugin['config'] : null
+      return plugin && plugin.config ? plugin.config : null
     }
   }
 
