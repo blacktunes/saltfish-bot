@@ -58,11 +58,11 @@ export const timeDifference = (startTime: Date, endTime?: Date) => {
  * @returns {string} 转义后的字符串
  */
 export const encode = (code: string, isComma: boolean = true): string => {
-  code = code.replace('&', '&amp;')
-  code = code.replace('[', '&#91;')
-  code = code.replace(']', '&#93;')
+  code = code.replaceAll('&', '&amp;')
+  code = code.replaceAll('[', '&#91;')
+  code = code.replaceAll(']', '&#93;')
   if (isComma) {
-    code = code.replace(',', '&#44;')
+    code = code.replaceAll(',', '&#44;')
   }
   return code
 }
@@ -73,9 +73,9 @@ export const encode = (code: string, isComma: boolean = true): string => {
  * @returns {string} 反转义后的字符串
  */
 export const decode = (code: string): string => {
-  code = code.replace('&amp;', '&')
-  code = code.replace('&#91;', '[')
-  code = code.replace('&#93;', ']')
-  code = code.replace('&#44;', ',')
+  code = code.replaceAll('&amp;', '&')
+  code = code.replaceAll('&#91;', '[')
+  code = code.replaceAll('&#93;', ']')
+  code = code.replaceAll('&#44;', ',')
   return code
 }
