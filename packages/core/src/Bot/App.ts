@@ -194,32 +194,29 @@ export class App {
     }
     this.isStart = true
     return new Promise((resolve) => {
-      this.Bot.Conn = new Connect(this.Bot.Data, ws)
+      this.Bot.Conn = new Connect(this.Bot.Data.name, ws)
       this.Bot.Conn.blacklist = this.blacklist
       this.Bot.Conn.whitelist = this.whitelist
 
-      this.Bot.Conn.addEvent('ws.ready', async () => {
-        this.Bot.Debug.debug = debug
-        this.Bot.Api = new Api(this.Bot)
-        this.Bot.Data.userId = (await this.Bot.Api.getLoginInfo()).user_id
-        this.getData().finally(() => {
-          schedule.scheduleJob('0 0 0 * * *', () => {
-            this.getData()
+      this.Bot.Conn.addEvent(
+        'ws.ready',
+        async () => {
+          this.Bot.Debug.debug = debug
+          this.Bot.Api = new Api(this.Bot)
+          this.Bot.Data.userId = (await this.Bot.Api.getLoginInfo()).user_id
+          this.getData().finally(() => {
+            schedule.scheduleJob('0 0 0 * * *', () => {
+              this.getData()
+            })
           })
-        })
 
-        this.Bot.Data.showLog = log
-        this.Bot.Event = new Event(this.Bot)
-        this.Bot.Event.on('ws.close', () => {
-          this.Bot.Log.logWarning(`${this.Bot.Data.name}已关闭`, 'WS')
-        }).on('meta_event.heartbeat', async () => {
-          // 响应心跳连接
-          this.Bot.Api.getApiStatus()
-        })
-        await this.initBot()
-        this.Bot.Log.logNotice('应用已启动', 'Bot')
-        resolve(this.Bot)
-      })
+          this.Bot.Event = new Event(this.Bot, log)
+          await this.initBot()
+          this.Bot.Log.logNotice('应用已启动', 'Bot')
+          resolve(this.Bot)
+        },
+        true
+      )
     })
   }
 
@@ -233,15 +230,22 @@ export class App {
   private initBot = async (): Promise<void> => {
     this._pluginsList.forEach((item) => {
       if (item.class) {
-        const _plugin = new (item.plugin as Plugin)(this.Bot)
-        _plugin.setup(item.config)
-        if (this.Bot.Plugin.list.some((i) => i.name === _plugin.name)) {
-          this.Bot.Log.logWarning(`发现重名插件 ${white(_plugin.name)}`, '插件')
+        if (item.plugin.name.startsWith('_')) {
+          this.Bot.Log.logWarning(`插件名首字符不能为${white('_')}，该插件无法加载`, '插件')
+        } else {
+          if (this.Bot.Plugin.list.some((i) => i.name === item.plugin.name)) {
+            this.Bot.Log.logWarning(
+              `发现重名插件 ${white(item.plugin.name)}，可能会影响部分功能的使用`,
+              '插件'
+            )
+          }
+          const plugin = new (item.plugin as Plugin)(this.Bot)
+          plugin.setup(item.config)
+          this.Bot.Plugin.list.push(plugin)
         }
-        this.Bot.Plugin.list.push(_plugin)
       } else {
         this.Bot.Plugin.list.push({
-          name: '匿名插件',
+          name: '_ANONYMOUS',
           init: item.plugin as PluginFunction
         })
       }

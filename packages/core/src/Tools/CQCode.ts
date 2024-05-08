@@ -209,7 +209,7 @@ export class CQCODE {
    * @param uin 发送者QQ号
    * @param content 具体消息
    */
-  customNode(name: string, uin: number, content: Message): NodeMessage {
+  customNode(name: string, uin: number, content: Message | NodeMessage[]): NodeMessage {
     return {
       type: 'node',
       data: {

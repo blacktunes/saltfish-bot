@@ -103,7 +103,9 @@ export class Data {
   /**
    * 是否显示Log输出
    */
-  showLog: boolean
+  get showLog(): boolean {
+    return this.Bot.Event.showLog
+  }
 
   /**
    * 不显示Log输出的群组列表

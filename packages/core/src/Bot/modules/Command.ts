@@ -1,5 +1,5 @@
 import { magenta, white, yellow } from 'colors'
-import { BotPlugin, GroupMsg, Prevent, PrivateMsg } from '../..'
+import { BotPlugin, GroupMsg, Message, Prevent, PrivateMsg } from '../..'
 import { Bot } from '../Bot'
 import NamedRegExp = require('named-regexp-groups')
 
@@ -61,16 +61,14 @@ export class Comm {
 }
 
 export class SetComm {
-  constructor(Bot: Bot, comm: Comm, repeat: boolean, plugin: boolean = false) {
+  constructor(Bot: Bot, comm: Comm, repeat: boolean) {
     this.Bot = Bot
     this.comm = comm
     this.repeat = repeat
-    this.plugin = plugin
   }
   private Bot: Bot
   private comm: Comm
   private repeat: boolean
-  private plugin: boolean
 
   /** 增加指令别名 */
   alias(name: string) {
@@ -93,7 +91,6 @@ export class SetComm {
   reg(reg: RegExp | NamedRegExp) {
     if (this.repeat) return this
     this.comm.reg = reg
-    this.comm.desc += ' [正则]'
     return this
   }
   /** 是否为管理员指令 */
@@ -127,17 +124,19 @@ export class SetComm {
     if (this.repeat) return this
 
     if (group_list) {
-      const list = magenta(group_list.toString())
-      const commName = magenta(this.comm.comm[0])
+      const list = group_list.toString()
+      const commName = this.comm.comm[0]
       if (this.comm.blacklist.group) {
         this.Bot.Log.logWarning(
-          `${commName} 已设置群聊黑名单，该白名单 ${list} 设置无效`,
-          this.plugin ? '插件' : 'Admin'
+          `${this.comm.group ? `${magenta(this.comm.group)} - ` : ''}${magenta(
+            commName
+          )} 已设置群聊黑名单，该白名单 ${magenta(list)} 设置无效`,
+          '指令'
         )
       } else {
-        this.Bot.Log.logNotice(
-          `${commName} 白名单已添加 ${yellow(list)}`,
-          this.plugin ? '插件' : 'Admin'
+        this.Bot.Log.logInfo(
+          `${this.comm.group ? `${this.comm.group} - ` : ''}${commName} 白名单已添加 ${list}`,
+          '指令'
         )
         if (this.comm.whitelist.group) {
           group_list.forEach((group_id) => {
@@ -150,17 +149,19 @@ export class SetComm {
     }
 
     if (user_list) {
-      const list = magenta(user_list.toString())
-      const commName = magenta(this.comm.comm[0])
+      const list = user_list.toString()
+      const commName = this.comm.comm[0]
       if (this.comm.blacklist.user) {
         this.Bot.Log.logWarning(
-          `${commName} 已设置私聊黑名单，该白名单 ${list} 设置无效`,
-          this.plugin ? '插件' : 'Admin'
+          `${this.comm.group ? `${magenta(this.comm.group)} - ` : ''}${magenta(
+            commName
+          )} 已设置私聊黑名单，该白名单 ${magenta(list)} 设置无效`,
+          '指令'
         )
       } else {
-        this.Bot.Log.logNotice(
-          `${commName} 白名单已添加 ${yellow(list)}`,
-          this.plugin ? '插件' : 'Admin'
+        this.Bot.Log.logInfo(
+          `${this.comm.group ? `${this.comm.group} - ` : ''}${commName} 白名单已添加 ${list}`,
+          '指令'
         )
         if (this.comm.whitelist.user) {
           user_list.forEach((group_id) => {
@@ -183,17 +184,19 @@ export class SetComm {
     if (this.repeat) return this
 
     if (group_list) {
-      const commName = magenta(this.comm.comm[0])
-      const list = magenta(group_list.toString())
+      const commName = this.comm.comm[0]
+      const list = group_list.toString()
       if (this.comm.whitelist.group) {
         this.Bot.Log.logWarning(
-          `${commName} 已设置群聊白名单，该黑名单 ${list} 设置无效`,
-          this.plugin ? '插件' : 'Admin'
+          `${this.comm.group ? `${magenta(this.comm.group)} - ` : ''}${magenta(
+            commName
+          )} 已设置群聊白名单，该黑名单 ${magenta(list)} 设置无效`,
+          '指令'
         )
       } else {
-        this.Bot.Log.logNotice(
-          `${commName} 黑名单已添加 ${yellow(list)}`,
-          this.plugin ? '插件' : 'Admin'
+        this.Bot.Log.logInfo(
+          `${this.comm.group ? `${this.comm.group} - ` : ''}${commName} 黑名单已添加 ${list}`,
+          '指令'
         )
         if (this.comm.blacklist.group) {
           group_list.forEach((group_id) => {
@@ -206,17 +209,19 @@ export class SetComm {
     }
 
     if (user_list) {
-      const commName = magenta(this.comm.comm[0])
-      const list = magenta(user_list.toString())
+      const commName = this.comm.comm[0]
+      const list = user_list.toString()
       if (this.comm.whitelist.user) {
         this.Bot.Log.logWarning(
-          `${commName} 已设置私聊白名单，该黑名单 ${list} 设置无效`,
-          this.plugin ? '插件' : 'Admin'
+          `${this.comm.group ? `${magenta(this.comm.group)} - ` : ''}${magenta(
+            commName
+          )} 已设置私聊白名单，该黑名单 ${magenta(list)} 设置无效`,
+          '指令'
         )
       } else {
-        this.Bot.Log.logNotice(
-          `${commName} 黑名单已添加 ${yellow(list)}`,
-          this.plugin ? '插件' : 'Admin'
+        this.Bot.Log.logInfo(
+          `${this.comm.group ? `${this.comm.group} - ` : ''}${commName} 黑名单已添加 ${list}`,
+          '指令'
         )
         if (this.comm.blacklist.user) {
           user_list.forEach((group_id) => {
@@ -233,7 +238,7 @@ export class SetComm {
 }
 
 export const setCommLister = (Bot: Bot, comm: Comm) => {
-  Bot.Event.on('message.group', async (e) => {
+  Bot.Event.command('message.group', async (e) => {
     if (comm.fn.group.length < 1) return
     if (comm.admin && !Bot.Admin.isAdmin(e.sender.user_id)) return
     if (comm.group) {
@@ -262,12 +267,12 @@ export const setCommLister = (Bot: Bot, comm: Comm) => {
       `群${groupName}(${groupId}) - ${username}(${userId})触发${commName}指令`,
       '指令'
     )
-
+    e.reply = (msg: Message) => Bot.Api.sendGroupMsg(e.group_id, msg)
     for (const i in comm.fn.group) {
       if (await comm.fn.group[i](e)) return true
     }
   })
-  Bot.Event.on('message.private', async (e) => {
+  Bot.Event.command('message.private', async (e) => {
     if (comm.fn.private.length < 1) return
     if (comm.admin && !Bot.Admin.isAdmin(e.sender.user_id)) return
     if (comm.group) {
@@ -288,6 +293,7 @@ export const setCommLister = (Bot: Bot, comm: Comm) => {
     const commName = yellow(comm.comm[0])
     Bot.Log.logNotice(`${username}(${userId})触发${commName}指令`, '指令')
 
+    e.reply = (msg: Message) => Bot.Api.sendPrivateMsg(e.user_id, msg)
     for (const i in comm.fn.private) {
       if (await comm.fn.private[i](e)) return true
     }

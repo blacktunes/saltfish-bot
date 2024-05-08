@@ -23,51 +23,50 @@ import {
 import { Bot } from '../Bot'
 
 export class Event {
-  constructor(Bot: Bot) {
+  constructor(
+    Bot: Bot,
+    readonly showLog: boolean
+  ) {
     this.Bot = Bot
     this.init()
   }
   private Bot: Omit<Bot, 'Event'>
 
   private init = () => {
-    if (this.Bot.Data.showLog) {
-      this.on(
-        'message.private',
-        (event) => {
-          if (event.user_id !== this.Bot.Data.userId) {
-            const name = white(event.sender.nickname)
-            const user_id = white(event.user_id.toString())
-            const msg = white(event.message)
-            const message_id = white(event.message_id.toString())
+    this.log('ws.close', () => {
+      this.Bot.Log.logWarning(`${this.Bot.Data.name}已关闭`, 'WS')
+    }).log('meta_event.heartbeat', async () => {
+      // 响应心跳连接
+      this.Bot.Api.getApiStatus()
+    })
+
+    if (this.showLog) {
+      this.log('message.private', (event) => {
+        if (event.user_id !== this.Bot.Data.userId) {
+          const name = white(event.sender.nickname)
+          const user_id = white(event.user_id.toString())
+          const msg = white(event.message)
+          const message_id = white(event.message_id.toString())
+          this.Bot.Log.logInfoRecv(`收到${name}(${user_id})的消息: ${msg} (${message_id})`, 'EVENT')
+        }
+        return this.Bot.Admin.isBan(event.user_id)
+      })
+        .log('message.group', (event) => {
+          if (!this.Bot.Data.noLogList.has(event.group_id)) {
+            const group_name = cyan(this.Bot.Data.groupList[event.group_id] || '')
+            const group_id = cyan(event.group_id.toString())
+            const user_name = cyan(event.sender.card || event.sender.nickname)
+            const user_id = cyan(event.user_id.toString())
+            const msg = cyan(event.message)
+            const message_id = cyan(event.message_id.toString())
             this.Bot.Log.logInfoRecv(
-              `收到${name}(${user_id})的消息: ${msg} (${message_id})`,
+              `收到群${group_name}(${group_id}) - ${user_name}(${user_id})的消息: ${msg} (${message_id})`,
               'EVENT'
             )
           }
           return this.Bot.Admin.isBan(event.user_id)
-        },
-        true
-      )
-        .on(
-          'message.group',
-          (event) => {
-            if (!this.Bot.Data.noLogList.has(event.group_id)) {
-              const group_name = cyan(this.Bot.Data.groupList[event.group_id] || '')
-              const group_id = cyan(event.group_id.toString())
-              const user_name = cyan(event.sender.card || event.sender.nickname)
-              const user_id = cyan(event.user_id.toString())
-              const msg = cyan(event.message)
-              const message_id = cyan(event.message_id.toString())
-              this.Bot.Log.logInfoRecv(
-                `收到群${group_name}(${group_id}) - ${user_name}(${user_id})的消息: ${msg} (${message_id})`,
-                'EVENT'
-              )
-            }
-            return this.Bot.Admin.isBan(event.user_id)
-          },
-          true
-        )
-        .on('notice.group_upload', (event) => {
+        })
+        .log('notice.group_upload', (event) => {
           if (this.Bot.Data.noLogList.has(event.group_id)) return
           const group_name = white(this.Bot.Data.groupList[event.group_id] || '')
           const group_id = white(event.group_id.toString())
@@ -81,7 +80,7 @@ export class Event {
             'EVENT'
           )
         })
-        .on('notice.group_admin', (event) => {
+        .log('notice.group_admin', (event) => {
           if (this.Bot.Data.noLogList.has(event.group_id)) return
           const group_name = this.Bot.Data.groupList[event.group_id] || ''
           const group_id = event.group_id.toString()
@@ -105,7 +104,7 @@ export class Event {
             )
           }
         })
-        .on('notice.group_decrease', (event) => {
+        .log('notice.group_decrease', (event) => {
           if (this.Bot.Data.noLogList.has(event.group_id)) return
           const group_name = magenta(this.Bot.Data.groupList[event.group_id] || '')
           const group_id = magenta(event.group_id.toString())
@@ -136,7 +135,7 @@ export class Event {
             )
           }
         })
-        .on('notice.group_increase', (event) => {
+        .log('notice.group_increase', (event) => {
           if (this.Bot.Data.noLogList.has(event.group_id)) return
           const group_name = white(this.Bot.Data.groupList[event.group_id] || '')
           const group_id = white(event.group_id.toString())
@@ -154,7 +153,7 @@ export class Event {
             'EVENT'
           )
         })
-        .on('notice.group_ban', (event) => {
+        .log('notice.group_ban', (event) => {
           if (this.Bot.Data.noLogList.has(event.group_id)) return
           const group_name = this.Bot.Data.groupList[event.group_id] || ''
           const group_id = event.group_id.toString()
@@ -184,10 +183,10 @@ export class Event {
             )
           }
         })
-        .on('notice.friend_add', (event) => {
+        .log('notice.friend_add', (event) => {
           this.Bot.Log.logNotice(`与 (${white(event.user_id.toString())}) 成为好友`, 'EVENT')
         })
-        .on('notice.group_recall', (event) => {
+        .log('notice.group_recall', (event) => {
           if (this.Bot.Data.noLogList.has(event.group_id)) return
           const group_name = magenta(this.Bot.Data.groupList[event.group_id] || '')
           const group_id = magenta(event.group_id.toString())
@@ -207,7 +206,7 @@ export class Event {
             'EVENT'
           )
         })
-        .on('notice.friend_recall', (event) => {
+        .log('notice.friend_recall', (event) => {
           const user_name = magenta(this.Bot.Data.friendList[event.user_id] || '')
           const user_id = magenta(event.user_id.toString())
           const message_id = magenta(event.message_id.toString())
@@ -216,7 +215,7 @@ export class Event {
             'EVENT'
           )
         })
-        .on('notice.notify', (event) => {
+        .log('notice.notify', (event) => {
           if (this.Bot.Data.noLogList.has(event.group_id) || !event.group_id) return
           const group_name = white(this.Bot.Data.groupList[event.group_id] || '')
           const group_id = white(event.group_id.toString())
@@ -254,7 +253,7 @@ export class Event {
             )
           }
         })
-        .on('notice.group_card', (event) => {
+        .log('notice.group_card', (event) => {
           if (this.Bot.Data.noLogList.has(event.group_id)) return
           const group_name = white(this.Bot.Data.groupList[event.group_id] || '')
           const group_id = white(event.group_id.toString())
@@ -266,7 +265,7 @@ export class Event {
             'EVENT'
           )
         })
-        .on('notice.offline_file', (event) => {
+        .log('notice.offline_file', (event) => {
           const user_name = white(this.Bot.Data.friendList[event.user_id] || '')
           const user_id = white(event.user_id.toString())
           const filename = white(event.file.name)
@@ -276,12 +275,12 @@ export class Event {
             'EVENT'
           )
         })
-        .on('request.friend', async (event) => {
+        .log('request.friend', async (event) => {
           const user_id = white(event.user_id.toString())
           const comment = white(event.comment)
           this.Bot.Log.logNotice(`(${user_id}) 申请添加好友 验证消息：${comment}`, 'EVENT')
         })
-        .on('request.group', async (event) => {
+        .log('request.group', async (event) => {
           const user_id = white(event.user_id.toString())
           const group_name = white(this.Bot.Data.groupList[event.group_id] || '')
           const group_id = white(event.group_id.toString())
@@ -298,14 +297,14 @@ export class Event {
             )
           }
         })
-        .on('notice.client_status', (event) => {
+        .log('notice.client_status', (event) => {
           if (event.online) {
             this.Bot.Log.logNotice(`账号在 ${white(event.client.device_name)} 上线`, 'EVENT')
           } else {
             this.Bot.Log.logWarning(`账号在 ${magenta(event.client.device_name)} 下线`, 'EVENT')
           }
         })
-        .on('notice.essence', (event) => {
+        .log('notice.essence', (event) => {
           if (event.sub_type === 'add') {
             this.Bot.Log.logNotice(
               `(${white(event.sender_id.toString())}) 的消息被 (${white(
@@ -338,11 +337,11 @@ export class Event {
   /**
    * 私聊信息
    */
-  on(type: 'message.private', fn: (e: PrivateMsg) => Prevent, log?: boolean): this
+  on(type: 'message.private', fn: (e: PrivateMsg) => Prevent): this
   /**
    * 群消息
    */
-  on(type: 'message.group', fn: (e: GroupMsg) => Prevent, log?: boolean): this
+  on(type: 'message.group', fn: (e: GroupMsg) => Prevent): this
   /**
    * 群文件上传
    */
@@ -410,9 +409,109 @@ export class Event {
   /**
    * 其它事件
    */
-  on(type: string, fn: (e: any) => Prevent): this
-  on(type: string, fn: (e: any) => Prevent, log?: boolean) {
-    this.Bot.Conn.addEvent(type, fn, log)
+  on(type: string, fn: (e: any) => Prevent): this {
+    this.Bot.Conn.addEvent(type, fn)
+    return this
+  }
+
+  /**
+   * 私聊信息
+   */
+  command(type: 'message.private', fn: (e: PrivateMsg) => Prevent): this
+  /**
+   * 群消息
+   */
+  command(type: 'message.group', fn: (e: GroupMsg) => Prevent): this
+  command(type: string, fn: (e: any) => Prevent): this {
+    this.Bot.Conn.addEvent(type, fn, false, true)
+    return this
+  }
+
+  /**
+   * WS链接或断开
+   */
+  private log(type: 'ws.ready' | 'ws.close' | 'ws.connect', fn: () => Prevent): this
+  /**
+   * WS链接错误
+   */
+  private log(type: 'ws.error', fn: (error: Error) => Prevent): this
+  /**
+   * 私聊信息
+   */
+  private log(type: 'message.private', fn: (e: PrivateMsg) => Prevent): this
+  /**
+   * 群消息
+   */
+  private log(type: 'message.group', fn: (e: GroupMsg) => Prevent): this
+  /**
+   * 群文件上传
+   */
+  private log(type: 'notice.group_upload', fn: (e: GroupUpload) => Prevent): this
+  /**
+   * 群管理员变动
+   */
+  private log(type: 'notice.group_admin', fn: (e: GroupAdmin) => Prevent): this
+  /**
+   * 群成员减少
+   */
+  private log(type: 'notice.group_decrease', fn: (e: GroupDecrease) => Prevent): this
+  /**
+   * 群成员增加
+   */
+  private log(type: 'notice.group_increase', fn: (e: GroupIncrease) => Prevent): this
+  /**
+   * 群禁言
+   */
+  private log(type: 'notice.group_ban', fn: (e: GroupBan) => Prevent): this
+  /**
+   * 好友添加
+   */
+  private log(type: 'notice.friend_add', fn: (e: FriendAdd) => Prevent): this
+  /**
+   * 群消息撤回
+   */
+  private log(type: 'notice.group_recall', fn: (e: GroupRecall) => Prevent): this
+  /**
+   * 好友消息撤回
+   */
+  private log(type: 'notice.friend_recall', fn: (e: FriendRecall) => Prevent): this
+  /**
+   * 群内提示事件
+   */
+  private log(type: 'notice.notify', fn: (e: GroupNotify) => Prevent): this
+  /**
+   * 群成员名片更新
+   */
+  private log(type: 'notice.group_card', fn: (e: GroupCard) => Prevent): this
+  /**
+   * 接收到离线文件
+   */
+  private log(type: 'notice.offline_file', fn: (e: OfflineFile) => Prevent): this
+  /**
+   * 加好友请求
+   */
+  private log(type: 'request.friend', fn: (e: Friend) => Prevent): this
+  /**
+   * 加群请求/邀请
+   */
+  private log(type: 'request.group', fn: (e: Group) => Prevent): this
+  /**
+   * 其他客户端在线状态变更
+   */
+  private log(type: 'notice.client_status', fn: (e: ClientStatus) => Prevent): this
+  /**
+   * 精华消息
+   */
+  private log(type: 'notice.essence', fn: (e: Essence) => Prevent): this
+  /**
+   * 心跳事件
+   */
+  private log(type: 'meta_event.heartbeat', fn: (e?: any) => Prevent): this
+  /**
+   * 其它事件
+   */
+  private log(type: string, fn: (e: any) => Prevent): this {
+    this.Bot.Conn.addEvent(type, fn, true)
     return this
   }
 

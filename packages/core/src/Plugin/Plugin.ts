@@ -12,7 +12,10 @@ export abstract class BotPlugin {
   }
 
   /** 插件名称 */
-  readonly name: string = '未命名插件'
+  static readonly name: string = '未命名插件'
+  get name() {
+    return this.constructor.name
+  }
 
   private _config: { [key: string]: any }
   private _configProxy: { [key: string]: any }
@@ -36,7 +39,7 @@ export abstract class BotPlugin {
       if (this.blacklist.group) {
         this.Bot.Log.logWarning(`已设置群聊黑名单，该白名单 ${magenta(list)} 设置无效`, this.name)
       } else {
-        this.Bot.Log.logNotice(`白名单已添加 ${yellow(list)}`, this.name)
+        this.Bot.Log.logInfo(`白名单已添加 ${list}`, this.name)
         if (this.whitelist.group) {
           group_list.forEach((group_id) => {
             this.whitelist.group.add(group_id)
@@ -52,7 +55,7 @@ export abstract class BotPlugin {
       if (this.blacklist.user) {
         this.Bot.Log.logWarning(`已设置私聊黑名单，该白名单 ${magenta(list)} 设置无效`, this.name)
       } else {
-        this.Bot.Log.logNotice(`白名单已添加 ${yellow(list)}`, this.name)
+        this.Bot.Log.logInfo(`白名单已添加 ${list}`, this.name)
         if (this.whitelist.user) {
           user_list.forEach((group_id) => {
             this.whitelist.user.add(group_id)
@@ -82,7 +85,7 @@ export abstract class BotPlugin {
       if (this.whitelist.group) {
         this.Bot.Log.logWarning(`已设置群聊白名单，该黑名单 ${magenta(list)} 设置无效`, this.name)
       } else {
-        this.Bot.Log.logNotice(`黑名单已添加 ${yellow(list)}`, this.name)
+        this.Bot.Log.logInfo(`黑名单已添加 ${list}`, this.name)
         if (this.blacklist.group) {
           group_list.forEach((group_id) => {
             this.blacklist.group.add(group_id)
@@ -98,7 +101,7 @@ export abstract class BotPlugin {
       if (this.whitelist.user) {
         this.Bot.Log.logWarning(`已设置私聊白名单，该黑名单 ${magenta(list)} 设置无效`, this.name)
       } else {
-        this.Bot.Log.logNotice(`黑名单已添加 ${yellow(list)}`, this.name)
+        this.Bot.Log.logInfo(`黑名单已添加 ${list}`, this.name)
         if (this.blacklist.user) {
           user_list.forEach((group_id) => {
             this.blacklist.user.add(group_id)

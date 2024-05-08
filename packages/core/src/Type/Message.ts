@@ -12,7 +12,7 @@ export type Message = string | CQMessage | CQMessage[]
 export interface NodeMessage {
   type: 'node'
   data: {
-    [key: string]: Message
+    [key: string]: Message | NodeMessage[]
   }
 }
 

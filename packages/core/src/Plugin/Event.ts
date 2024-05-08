@@ -127,7 +127,7 @@ export class Event {
         fn(e)
       }
     }
-    this.Bot.Conn.addEvent(type, _fn, log)
+    this.Bot.Conn.addEvent(type, _fn, log, false, this.group)
     return this
   }
 
@@ -152,10 +152,10 @@ export class Event {
       }
     }
     if (type === 'sendPrivateMsg') {
-      this.Bot.Event.sendEvent.group.push(_fn)
-    }
-    if (type === 'sendPrivateMsg') {
       this.Bot.Event.sendEvent.private.push(_fn)
+    }
+    if (type === 'sendGroupMsg') {
+      this.Bot.Event.sendEvent.group.push(_fn)
     }
     return this
   }

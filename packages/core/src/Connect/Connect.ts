@@ -1,11 +1,16 @@
-import { Data } from '../Bot/modules/Data'
 import { white } from 'colors'
 import { w3cwebsocket } from 'websocket'
 import { ApiRes, Prevent, WebSocketConfig } from '..'
 import { decode, PrintLog } from '../Tools'
 import { GroupMsg, PrivateMsg, _GroupMsg, _PrivateMsg } from '../Type'
 
-type MessageEvent = { type: string; fn: (data: any) => Prevent }
+type MessageEvent = {
+  type: string
+  fn: (data: any) => Prevent
+  log?: boolean
+  command?: boolean
+  group?: string
+}
 
 interface NextMessageEvent {
   message_id: number
@@ -16,18 +21,15 @@ interface NextMessageEvent {
 }
 
 export class Connect {
-  constructor(data: Data, config?: WebSocketConfig) {
+  constructor(name: string, config?: WebSocketConfig) {
     if (config) {
       for (const key in config) {
         this[key] = config[key]
       }
     }
-    this.Data = data
-    this.name = `${data.name}][WS`
+    this.name = `${name}][WS`
     this.connect()
   }
-
-  private Data: Data
 
   private name = 'WS'
 
@@ -239,10 +241,16 @@ export class Connect {
 
   /**
    * 增加事件监听
-   * message消息的log参数true时有最高优先度，同时用于控制被Ban拦截
+   * message消息的log参数为true时有最高优先度
    * 推荐使用Event类中的方法
    */
-  addEvent(type: string, fn: (e?: any) => Prevent, log?: boolean) {
+  addEvent(
+    type: string,
+    fn: (e?: any) => Prevent,
+    log?: boolean,
+    command?: boolean,
+    group?: string
+  ) {
     if (type === 'ws.ready') {
       this.ready = fn
     } else if (type === 'ws.connect') {
@@ -255,33 +263,49 @@ export class Connect {
       if (log) {
         this.messageLogEvent.push({
           type,
-          fn
+          fn,
+          group
         })
       } else {
         this.messageEventList.message.push({
           type,
-          fn
+          fn,
+          log,
+          command,
+          group
         })
       }
     } else if (type.startsWith('notice.')) {
       this.messageEventList.notice.push({
         type,
-        fn
+        fn,
+        log,
+        command,
+        group
       })
     } else if (type.startsWith('request.')) {
       this.messageEventList.request.push({
         type,
-        fn
+        fn,
+        log,
+        command,
+        group
       })
     } else if (type.startsWith('meta_event.')) {
       this.messageEventList.meta_event.push({
         type,
-        fn
+        fn,
+        log,
+        command,
+        group
       })
     } else {
       this.messageEventList.other.push({
         type,
-        fn
+        fn,
+        log,
+        command,
+        group
       })
     }
     return this
@@ -316,10 +340,76 @@ export class Connect {
   }
 
   /**
-   * 获取消息监听器数量
+   * 获取监听器数量
    */
   getEventNum() {
-    return this.messageEventList.message.length
+    return (
+      this.messageEventList.message.length +
+      this.messageEventList.notice.length +
+      this.messageEventList.request.length +
+      this.messageEventList.meta_event.length +
+      this.messageEventList.other.length
+    )
+  }
+
+  /**
+   * 获取监听器详情
+   */
+  getEventInfo() {
+    const list: {
+      [name: string]: {
+        [name: string]: number
+      }
+    } = {}
+    const bot: {
+      [name: string]: number
+    } = {}
+    const system: {
+      [name: string]: number
+    } = {}
+
+    this.messageLogEvent.forEach((event) => {
+      if (!(event.type in system)) {
+        system[event.type] = 0
+      }
+      system[event.type] += 1
+    })
+
+    let key: keyof typeof this.messageEventList
+    for (key in this.messageEventList) {
+      this.messageEventList[key].forEach((event) => {
+        if (!event.command) {
+          if (event.log) {
+            if (!(event.type in system)) {
+              system[event.type] = 0
+            }
+            system[event.type] += 1
+          } else if (event.group) {
+            if (!(event.group in list)) {
+              list[event.group] = {}
+            }
+            if (!(event.type in list[event.group])) {
+              list[event.group][event.type] = 0
+            }
+            list[event.group][event.type] += 1
+          } else {
+            if (!(event.type in bot)) {
+              bot[event.type] = 0
+            }
+            bot[event.type] += 1
+          }
+        }
+      })
+    }
+
+    if (Object.keys(bot).length > 0) {
+      list._bot = bot
+    }
+    if (Object.keys(system).length > 0) {
+      list._system = system
+    }
+
+    return list
   }
 
   private APIList = new Map<number, { fn: Function; info: any }>()

@@ -14,7 +14,7 @@ export interface Plugin {
 export type PluginFunction = (bot: Bot) => void | Promise<void>
 
 export interface AnonymousPlugin {
-  name: '匿名插件'
+  name: '_ANONYMOUS'
   init: PluginFunction
 }
 

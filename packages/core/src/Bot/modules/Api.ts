@@ -82,7 +82,7 @@ export class Api {
         })`,
         'API'
       )
-      return result.retcode
+      return Promise.reject(new Error(`${result.retcode}`))
     }
   }
 
@@ -131,7 +131,7 @@ export class Api {
         })`,
         'API'
       )
-      return result.retcode
+      return Promise.reject(new Error(`${result.retcode}`))
     }
   }
 
@@ -170,7 +170,7 @@ export class Api {
         `发送合并转发至群 ${group_name}(${white(group_id.toString())})失败`,
         'API'
       )
-      return result.retcode
+      return Promise.reject(new Error(`${result.retcode}`))
     }
   }
 
