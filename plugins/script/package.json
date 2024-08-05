@@ -8,6 +8,9 @@
     "format": "prettier --write . --ignore-path .gitignore",
     "build": "rimraf dist && tsc"
   },
+  "peerDependency": {
+    "saltfish-bot": "workspace:^"
+  },
   "dependencies": {
     "saltfish-bot": "workspace:^"
   }

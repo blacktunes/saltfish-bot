@@ -1,7 +1,7 @@
 import { BotPlugin } from 'saltfish-bot'
 
 export default class extends BotPlugin {
-  name = '脚本执行'
+  static name = '脚本执行'
   script: boolean = false
 
   init = () => {
