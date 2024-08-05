@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="../lib/vue.global.js"></script>
+    <script src="../lib/naive-ui.js"></script>
+    <link
+      rel="stylesheet"
+      href="./style.css"
+    />
+    <title>HELP</title>
+  </head>
+  <body>
+    <div id="main">
+      <div class="name">
+        <div class="label"></div>
+        <span>指令帮助</span>
+      </div>
+      <n-flex vertical>
+        <n-card
+          size="small"
+          v-for="(plugin, key) in data"
+          :key="key"
+        >
+          <template #header>
+            <div
+              class="card-header"
+              style="font-size: 24px"
+            >
+              <span>{{key === '_bot' ? '其它' : key}}</span>
+              <n-tag size="small"> {{plugin.length}} </n-tag>
+            </div>
+          </template>
+          <n-flex>
+            <n-card
+              size="small"
+              v-for="(command, index) in plugin"
+              :key="`${key}-${index}`"
+            >
+              <template #header>
+                <div class="card-header">
+                  <span>{{command.name[0]}}</span>
+                </div>
+              </template>
+              <n-flex :size="30">
+                <!-- <n-statistic
+                  label="指令"
+                  v-if="command.name[0]"
+                >
+                  <span style="font-weight: bold;">{{command.name[0]}}</span>
+                </n-statistic> -->
+                <n-statistic
+                  label="别名"
+                  v-if="command.name.length > 1"
+                >
+                  <n-flex>
+                    <n-tag
+                      v-for="item in command.name.slice(1)"
+                      :key="item"
+                      style="margin-top: 7px"
+                    >
+                      {{item}}
+                    </n-tag>
+                  </n-flex>
+                </n-statistic>
+                <n-statistic label="说明">
+                  <span style="font-size: 16px"> {{command.desc || '-'}} </span>
+                </n-statistic>
+                <n-statistic
+                  label="权限"
+                  v-if="command.admin"
+                >
+                  <span style="font-size: 16px">管理员</span>
+                </n-statistic>
+                <n-statistic
+                  label="正则"
+                  v-if="command.reg"
+                >
+                  <span style="font-size: 14px">{{command.reg}}</span>
+                </n-statistic>
+              </n-flex>
+            </n-card>
+          </n-flex>
+        </n-card>
+      </n-flex>
+    </div>
+    <script>
+      const data = window.data || {
+        system: [
+          { name: ['#help', '#9me', '#test'], admin: false, desc: '查询帮助' },
+          { name: ['#bot', '#BOT状态'], admin: true, desc: '查询BOT状态' },
+          { name: ['#sys', '#服务器状态'], admin: true, desc: '查询服务器状态' }
+        ],
+        FHA: [
+          { name: ['#小剧场'], admin: false, desc: '' },
+          { name: ['#怪话榜'], admin: false, desc: '' },
+          { name: ['#整理怪话'], admin: true, desc: '' },
+          {
+            name: ['#群友语录'],
+            reg: '/^#((群友)|\\[CQ:at,qq=([0-9]+)\\]\\s*|(\\S+))语录/i',
+            admin: false,
+            desc: ''
+          },
+          {
+            name: ['#录入'],
+            reg: '/(^#录入\\s*\\[CQ:at,qq=([0-9]+)\\]\\s*(\\S+))|(^#录入 (\\S+) (\\S+))/i',
+            admin: false,
+            desc: ''
+          },
+          {
+            name: ['#来点群友'],
+            reg: '/^#来点((群友)|(\\s*\\[CQ:at,qq=([0-9]+)\\])|(\\S+))/i',
+            admin: false,
+            desc: ''
+          },
+          {
+            name: ['#录入别称'],
+            reg: '/^#别称\\s*\\[CQ:at,qq=([0-9]+)\\]\\s*(\\S+)/i',
+            admin: false,
+            desc: ''
+          },
+          { name: ['#禁用别称'], reg: '/^#禁用别称 (\\S+)/', admin: true, desc: '' },
+          { name: ['#耻辱柱'], admin: false, desc: '' },
+          { name: ['#项目列表'], admin: false, desc: '' },
+          { name: ['#查询进度'], reg: '/^#查询进度 (\\S+)/', admin: false, desc: '' },
+          { name: ['#增加项目'], reg: '/^#增加项目 (\\S+)/', admin: false, desc: '' },
+          { name: ['#增加进度'], reg: '/^#更新进度 (\\S+) (\\S+)/', admin: false, desc: '' }
+        ]
+      }
+
+      const App = {
+        setup() {
+          return {
+            data
+          }
+        }
+      }
+      const app = Vue.createApp(App)
+      app.use(naive)
+      app.mount('#main')
+    </script>
+  </body>
+</html>

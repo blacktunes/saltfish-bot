@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="../lib/vue.global.js"></script>
+    <script src="../lib/naive-ui.js"></script>
+    <title>SYSTEM</title>
+    <link
+      rel="stylesheet"
+      href="./style.css"
+    />
+  </head>
+  <body>
+    <div id="main">
+      <div class="name">
+        <div class="label"></div>
+        <span>服务器状态</span>
+      </div>
+      <n-time
+        :time="time"
+        style="margin-left: 15px"
+      ></n-time>
+      <div style="height: 10px"></div>
+      <n-flex vertical>
+        <n-card size="small">
+          <div class="card-header">
+            <span>CPU</span>
+          </div>
+          <n-flex vertical>
+            <n-progress
+              style="margin-top: 5px"
+              type="line"
+              :height="15"
+              :show-indicator="false"
+              :percentage="cpu"
+              :color="setColor(cpu)"
+            ></n-progress>
+            <n-statistic label="利用率"> {{cpu}}% </n-statistic>
+          </n-flex>
+        </n-card>
+        <n-card size="small">
+          <div class="card-header">
+            <span>内存</span>
+          </div>
+          <n-flex vertical>
+            <n-progress
+              style="margin-top: 5px"
+              type="line"
+              :height="15"
+              :show-indicator="false"
+              :percentage="mem.percentage"
+              :color="setColor(mem.percentage)"
+            ></n-progress>
+            <n-flex :size="20">
+              <n-statistic label="利用率"> {{mem.percentage}}% </n-statistic>
+              <n-statistic label="使用量"> {{mem.used}}MB / {{mem.total}}MB </n-statistic>
+            </n-flex>
+          </n-flex>
+        </n-card>
+        <n-card size="small">
+          <div class="card-header">
+            <span>网络</span>
+          </div>
+          <n-flex :size="20">
+            <n-statistic label="上行"> {{network.up}} </n-statistic>
+            <n-statistic label="下行"> {{network.down}} </n-statistic>
+          </n-flex>
+        </n-card>
+        <n-card size="small">
+          <div class="card-header">
+            <span>主要进程</span>
+          </div>
+          <n-data-table
+            :bordered="false"
+            :single-line="false"
+            :columns="columns"
+            :data="processes"
+          />
+        </n-card>
+      </n-flex>
+    </div>
+    <script>
+      const data = window.data || {
+        cpu: 23.3,
+        men: {
+          total: 16228.96,
+          used: 8212.31,
+          percentage: 50.6
+        },
+        network: {
+          up: 420892.7536231884,
+          down: 16278.368794326243
+        },
+        processes: [
+          {
+            name: 'msedge.exe',
+            cpu: 0.03895223502943418,
+            mem: 5.338690910876438,
+            memRss: 887208
+          },
+          {
+            name: 'Code.exe',
+            cpu: 0.3742074131625818,
+            mem: 3.583798639295973,
+            memRss: 595572
+          },
+          {
+            name: 'msedge.exe',
+            cpu: 0.11375008172693588,
+            mem: 3.310175145031524,
+            memRss: 550100
+          }
+        ]
+      }
+
+      const App = {
+        setup() {
+          const setColor = (num) => {
+            if (num >= 90) {
+              return '#d03050'
+            }
+            if (num >= 70) {
+              return '#f0a020'
+            }
+            return '#18a058'
+          }
+
+          const getSpeed = (speed) => {
+            speed = speed / 1024
+            if (speed >= 1000) {
+              speed = speed / 1024
+              return `${speed.toFixed(1)}MB/s`
+            } else {
+              return `${speed.toFixed(1)}KB/s`
+            }
+          }
+
+          for (const key in data.processes) {
+            data.processes[key].cpu = data.processes[key].cpu.toFixed(2)
+            if (data.processes[key].cpu === '0.00') {
+              data.processes[key].cpu = `<0.01%`
+            } else {
+              data.processes[key].cpu += '%'
+            }
+            data.processes[key].mem = data.processes[key].mem.toFixed(2)
+            if (data.processes[key].mem === '0.00') {
+              data.processes[key].mem = `<0.01%`
+            } else {
+              data.processes[key].mem += '%'
+            }
+            data.processes[key].memRss = `${(data.processes[key].memRss / 1024).toFixed(2)}MB`
+          }
+
+          const columns = [
+            {
+              title: '进程',
+              key: 'name'
+            },
+            {
+              title: 'CPU占用率',
+              key: 'cpu'
+            },
+            {
+              title: '内存占用率',
+              key: 'mem'
+            },
+            {
+              title: '内存使用量',
+              key: 'memRss'
+            }
+          ]
+
+          return {
+            setColor,
+            cpu: data.cpu,
+            mem: data.men,
+            network: {
+              up: getSpeed(data.network.up),
+              down: getSpeed(data.network.down)
+            },
+            processes: data.processes,
+            columns,
+            time: new Date()
+          }
+        }
+      }
+      const app = Vue.createApp(App)
+      app.use(naive)
+      app.mount('#main')
+    </script>
+  </body>
+</html>

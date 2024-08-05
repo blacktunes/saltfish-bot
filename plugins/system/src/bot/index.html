@@ -1,0 +1,339 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="../lib/vue.global.js"></script>
+    <script src="../lib/naive-ui.js"></script>
+    <title>STATUS</title>
+    <link
+      rel="stylesheet"
+      href="./style.css"
+    />
+  </head>
+  <body>
+    <div id="main">
+      <div class="name">
+        <div class="label"></div>
+        <span> {{name}} </span>
+      </div>
+      <n-flex vertical>
+        <n-card size="small">
+          <n-flex :size="30">
+            <n-statistic label="启动时间">
+              <n-time :time="startTime" />
+            </n-statistic>
+            <n-statistic label="运行时长"> {{runTime}} </n-statistic>
+            <n-statistic label="内存占用"> {{memory}}MB </n-statistic>
+            <n-statistic label="消息队列"> {{message}} </n-statistic>
+          </n-flex>
+        </n-card>
+        <n-card size="small">
+          <template #header>
+            <div class="card-header">
+              <span>插件</span>
+              <n-tag size="small"> {{plugins.length}} </n-tag>
+            </div>
+          </template>
+          <n-flex>
+            <n-tag
+              size="medium"
+              v-for="(item, index) in plugins"
+              :key="index"
+            >
+              {{item}}
+              <template #icon>
+                <n-icon>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                    viewBox="0 0 24 24"
+                  >
+                    <g
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <circle
+                        cx="5"
+                        cy="6"
+                        r="2"
+                      ></circle>
+                      <circle
+                        cx="12"
+                        cy="6"
+                        r="2"
+                      ></circle>
+                      <circle
+                        cx="19"
+                        cy="6"
+                        r="2"
+                      ></circle>
+                      <circle
+                        cx="5"
+                        cy="18"
+                        r="2"
+                      ></circle>
+                      <circle
+                        cx="12"
+                        cy="18"
+                        r="2"
+                      ></circle>
+                      <path d="M5 8v8"></path>
+                      <path d="M12 8v8"></path>
+                      <path d="M19 8v2a2 2 0 0 1-2 2H5"></path>
+                    </g>
+                  </svg>
+                </n-icon>
+              </template>
+            </n-tag>
+          </n-flex>
+        </n-card>
+        <n-card size="small">
+          <template #header>
+            <div class="card-header">
+              <span>指令</span>
+              <n-tag size="small"> {{commandTotal}} </n-tag>
+            </div>
+          </template>
+          <n-flex
+            :size="15"
+            vertical
+          >
+            <n-card
+              v-for="(command, key) in commands"
+              :key="key"
+              size="small"
+            >
+              <template #header>
+                <div class="sub-header">
+                  <span>{{key === 'bot' ? '全局指令' : key}}</span>
+                  <n-tag
+                    size="small"
+                    :color="{textColor: 'gray'}"
+                  >
+                    {{command.length}}
+                  </n-tag>
+                </div>
+              </template>
+              <n-flex>
+                <n-tag
+                  v-for="(item, index) in command"
+                  :key="`${key}-${index}`"
+                  size="medium"
+                  :type="item.admin ? 'warning' : ''"
+                >
+                  <template #icon>
+                    <n-icon>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M11 14.17L8.83 12L11 9.83L9.59 8.41L6 12l3.59 3.59zm3.41 1.42L18 12l-3.59-3.59L13 9.83L15.17 12L13 14.17z"
+                          fill="currentColor"
+                        ></path>
+                        <path
+                          d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-.14 0-.27.01-.4.04a2.008 2.008 0 0 0-1.44 1.19c-.1.23-.16.49-.16.77v14c0 .27.06.54.16.78s.25.45.43.64c.27.27.62.47 1.01.55c.13.02.26.03.4.03h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7-.25c.41 0 .75.34.75.75s-.34.75-.75.75s-.75-.34-.75-.75s.34-.75.75-.75zM19 15v4H5V5h14v10z"
+                          fill="currentColor"
+                        ></path>
+                      </svg>
+                    </n-icon>
+                  </template>
+                  <span> {{item.name}} </span>
+                  <n-tag
+                    v-if="item.reg"
+                    style="margin-left: 5px"
+                    size="small"
+                    :bordered="false"
+                    :type="item.admin ? 'warning' : ''"
+                  >
+                    正则指令
+                  </n-tag>
+                </n-tag>
+              </n-flex>
+            </n-card>
+          </n-flex>
+        </n-card>
+        <n-card size="small">
+          <template #header>
+            <div class="card-header">
+              <span>监听器</span>
+              <n-tag size="small"> {{eventsTotal}} </n-tag>
+            </div>
+          </template>
+          <n-flex
+            :size="15"
+            vertical
+          >
+            <n-card
+              v-for="(event, key) in events"
+              :key="key"
+              size="small"
+            >
+              <template #header>
+                <div class="sub-header">
+                  <span>{{getName(key)}}</span>
+                </div>
+              </template>
+              <n-flex>
+                <n-tag
+                  v-for="(value, name) in event"
+                  :key="`${key}-${name}`"
+                >
+                  <span> {{name}} </span>
+                  <n-tag
+                    size="small"
+                    :bordered="false"
+                    style="margin-left: 5px"
+                    >{{value}}
+                  </n-tag>
+                </n-tag>
+              </n-flex>
+            </n-card>
+          </n-flex>
+        </n-card>
+      </n-flex>
+    </div>
+    <script>
+      const data = window.data || {
+        name: 'Bot',
+        time: 3210,
+        memory: 170.4,
+        message: 1,
+        plugins: ['system', '都怪金城', '关键字', '复读', '@'],
+        commands: {
+          system: [
+            { name: '#bot', reg: undefined, admin: true },
+            { name: '#sys', reg: undefined, admin: true }
+          ],
+          FHA: [
+            { name: '#小剧场', reg: undefined, admin: false },
+            { name: '#怪话榜', reg: undefined, admin: false },
+            { name: '#整理怪话', reg: undefined, admin: true },
+            {
+              name: '#群友语录',
+              reg: '/^#((群友)|\\[CQ:at,qq=([0-9]+)\\]\\s*|(\\S+))语录/i',
+              admin: false
+            },
+            {
+              name: '#录入',
+              reg: '/(^#录入\\s*\\[CQ:at,qq=([0-9]+)\\]\\s*(\\S+))|(^#录入 (\\S+) (\\S+))/i',
+              admin: false
+            },
+            {
+              name: '#来点群友',
+              reg: '/^#来点((群友)|(\\s*\\[CQ:at,qq=([0-9]+)\\])|(\\S+))/i',
+              admin: false
+            },
+            {
+              name: '#录入别称',
+              reg: '/^#别称\\s*\\[CQ:at,qq=([0-9]+)\\]\\s*(\\S+)/i',
+              admin: false
+            },
+            { name: '#禁用别称', reg: '/^#禁用别称 (\\S+)/', admin: true },
+            { name: '#耻辱柱', reg: undefined, admin: false },
+            { name: '#项目列表', reg: undefined, admin: false },
+            { name: '#查询进度', reg: '/^#查询进度 (\\S+)/', admin: false },
+            { name: '#增加项目', reg: '/^#增加项目 (\\S+)/', admin: false },
+            { name: '#增加进度', reg: '/^#更新进度 (\\S+) (\\S+)/', admin: false }
+          ]
+        },
+        events: {
+          脚本执行: { 'message.group': 1 },
+          投稿查询: { 'message.group': 1 },
+          FHA: {
+            'message.group': 1,
+            'notice.group_ban': 1,
+            'notice.group_recall': 1,
+            'notice.group_decrease': 1
+          },
+          都怪金城: { 'message.group': 1 },
+          关键字: { 'message.group': 1 },
+          复读: { 'message.group': 1 },
+          '@': { 'message.group': 1 },
+          _system: {
+            'message.private': 1,
+            'message.group': 1,
+            'notice.group_upload': 1,
+            'notice.group_admin': 1,
+            'notice.group_decrease': 1,
+            'notice.group_increase': 1,
+            'notice.group_ban': 1,
+            'notice.friend_add': 1,
+            'notice.group_recall': 1,
+            'notice.friend_recall': 1,
+            'notice.notify': 1,
+            'notice.group_card': 1,
+            'notice.offline_file': 1,
+            'notice.client_status': 1,
+            'notice.essence': 1,
+            'request.friend': 1,
+            'request.group': 1,
+            'meta_event.heartbeat': 1
+          }
+        }
+      }
+
+      const App = {
+        setup() {
+          const time = data.time
+
+          const startTime = Date.now() - time * 1000
+
+          const secondsFormat = (s) => {
+            const day = Math.floor(s / (24 * 3600))
+            const hour = Math.floor((s - day * 24 * 3600) / 3600)
+            const minute = Math.floor((s - day * 24 * 3600 - hour * 3600) / 60)
+            const second = s - day * 24 * 3600 - hour * 3600 - minute * 60
+            return `${day ? day + '天' : ''}${hour ? hour + '小时' : ''}${
+              minute ? minute + '分钟' : ''
+            }${second ? second.toFixed(0) + '秒' : ''}`
+          }
+
+          let commandTotal = 0
+          for (const key in data.commands) {
+            commandTotal += data.commands[key].length
+          }
+
+          let eventsTotal = 0
+          for (const key in data.events) {
+            for (const type in data.events[key]) {
+              eventsTotal += data.events[key][type]
+            }
+          }
+
+          const getName = (name) => {
+            switch (name) {
+              case '_bot':
+                return '全局监听器'
+              case '_system':
+                return '框架监听器'
+              default:
+                return name
+            }
+          }
+
+          return {
+            name: data.name,
+            startTime,
+            runTime: secondsFormat(time),
+            memory: data.memory,
+            message: data.message,
+            plugins: data.plugins,
+            commands: data.commands,
+            commandTotal,
+            events: data.events,
+            eventsTotal,
+            getName
+          }
+        }
+      }
+      const app = Vue.createApp(App)
+      app.use(naive)
+      app.mount('#main')
+    </script>
+  </body>
+</html>
