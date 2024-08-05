@@ -23,11 +23,11 @@ puppeteer
  * 生成html文件id为main的dom截图
  * @returns 图片的base64字符串
  */
-export const htmlToImage = async (
+export const htmlToImage = async <T>(
   /** html文件位置 */
   html_path: string,
   /** 需要传递的数据 */
-  data?: any,
+  data?: T,
   /** A `selector` to query page for {@link https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors | selector} to query page for. */
   selector = 'div[id="main"]',
   /** Sets the viewport of the page. */
@@ -43,6 +43,7 @@ export const htmlToImage = async (
     screenshot_option?: Omit<puppeteer.ScreenshotOptions, 'encoding'>
     /** 网页的console事件 */
     log_cb?: (e: puppeteer.ConsoleMessage) => void
+    message_cb?: (e: T) => void
   } = {}
 ) => {
   if (!browser) {
@@ -59,6 +60,12 @@ export const htmlToImage = async (
     })
   }
 
+  if (options.message_cb) {
+    page.exposeFunction('send', (message: any) => {
+      options.message_cb(message)
+    })
+  }
+
   await page.evaluateOnNewDocument((_data) => {
     window['data'] = _data
   }, data)
@@ -72,13 +79,13 @@ export const htmlToImage = async (
 
   const form = await page.$(selector)
   const screenshot = await form.screenshot({
-    type: 'jpeg',
-    // quality: 90,
-    encoding: 'base64',
+    type: 'png',
+    // quality: 100,
+    encoding: options.screenshot_option?.path ? 'binary' : 'base64',
     ...options.screenshot_option
   })
   await page.close()
-  return `base64://${screenshot}`
+  return options.screenshot_option?.path || `base64://${screenshot}`
 }
 
 export default htmlToImage
