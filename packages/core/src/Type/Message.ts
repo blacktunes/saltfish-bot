@@ -1,5 +1,7 @@
 import { PrivateSender, GroupSender } from './Event'
 
+export type MessageResult = { status: 'ok'; message_id: number } | { status: 'fail'; retcode: number }
+
 export interface CQMessage {
   type: string
   data: null | {

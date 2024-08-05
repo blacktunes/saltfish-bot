@@ -9,6 +9,7 @@ import {
   ImageInfo,
   MemberInfo,
   Message,
+  MessageResult,
   Msg,
   NodeMessage,
   PrivateSender,
@@ -48,11 +49,11 @@ export class Api {
     user_id: number,
     message: Message,
     auto_escape: boolean = false
-  ): Promise<number> {
+  ): Promise<MessageResult> {
     const logMsg = JSON.stringify(message)
     if (this.Bot.Debug.debug) {
       this.Bot.Log.logDebug(`发送消息至(${user_id}): ${logMsg}`)
-      return 0
+      return { status: 'ok', message_id: 0 }
     }
 
     const result = await this.Bot.Conn.useAPI('send_private_msg', {
@@ -74,7 +75,7 @@ export class Api {
         )})`,
         'API'
       )
-      return result.data.message_id
+      return { status: 'ok', message_id: result.data.message_id }
     } else {
       this.Bot.Log.logError(
         `发送消息至 ${name}(${white(user_id.toString())}): ${white(logMsg)} 失败 (${
@@ -82,7 +83,7 @@ export class Api {
         })`,
         'API'
       )
-      return Promise.reject(new Error(`${result.retcode}`))
+      return { status: 'fail', retcode: result.retcode }
     }
   }
 
@@ -97,11 +98,11 @@ export class Api {
     group_id: number,
     message: Message,
     auto_escape: boolean = false
-  ): Promise<number> {
+  ): Promise<MessageResult> {
     const logMsg = JSON.stringify(message)
     if (this.Bot.Debug.debug) {
       this.Bot.Log.logDebug(`发送消息至群(${group_id}): ${logMsg}`)
-      return 0
+      return { status: 'ok', message_id: 0 }
     }
 
     const result = await this.Bot.Conn.useAPI('send_group_msg', {
@@ -123,7 +124,7 @@ export class Api {
         })`,
         'API'
       )
-      return result.data.message_id
+      return { status: 'ok', message_id: result.data.message_id }
     } else {
       this.Bot.Log.logError(
         `发送消息至群 ${group_name}(${white(group_id.toString())}): ${white(logMsg)} 失败 (${
@@ -131,7 +132,7 @@ export class Api {
         })`,
         'API'
       )
-      return Promise.reject(new Error(`${result.retcode}`))
+      return { status: 'fail', retcode: result.retcode }
     }
   }
 
@@ -140,10 +141,10 @@ export class Api {
    * @param group_id 群号
    * @param messages 自定义转发消息
    */
-  async sendGroupForwardMsg(group_id: number, messages: NodeMessage[]): Promise<number> {
+  async sendGroupForwardMsg(group_id: number, messages: NodeMessage[]): Promise<MessageResult> {
     if (this.Bot.Debug.debug) {
       this.Bot.Log.logDebug(`发送合并转发至群(${group_id})`)
-      return 0
+      return { status: 'ok', message_id: 0 }
     }
 
     const result = await this.Bot.Conn.useAPI('send_group_forward_msg', {
@@ -164,13 +165,13 @@ export class Api {
         )})`,
         'API'
       )
-      return result.data.message_id
+      return { status: 'ok', message_id: result.data.message_id }
     } else {
       this.Bot.Log.logError(
         `发送合并转发至群 ${group_name}(${white(group_id.toString())})失败`,
         'API'
       )
-      return Promise.reject(new Error(`${result.retcode}`))
+      return { status: 'fail', retcode: result.retcode }
     }
   }
 

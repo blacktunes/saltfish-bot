@@ -1,11 +1,11 @@
 import { Prevent } from './Bot'
 import { File, GroupFile } from './File'
-import { Message } from './Message'
+import { Message, MessageResult } from './Message'
 import { Device } from './QQ'
 
 export type PrivateMsg = _PrivateMsg & {
   nextMessage: (fn: (msg: string, event: PrivateMsg, prevEvent: _PrivateMsg) => Prevent) => void
-  reply: (msg: Message) => Promise<number>
+  reply: (msg: Message) => Promise<MessageResult>
 }
 
 // eslint-disable-next-line typescript/class-name-casing
@@ -77,7 +77,7 @@ export interface PrivateSender {
 
 export type GroupMsg = _GroupMsg & {
   nextMessage: (fn: (msg: string, event: GroupMsg) => Prevent) => void
-  reply: (msg: Message) => Promise<number>
+  reply: (msg: Message) => Promise<MessageResult>
 }
 
 // eslint-disable-next-line typescript/class-name-casing
