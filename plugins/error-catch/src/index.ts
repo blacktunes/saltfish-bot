@@ -3,13 +3,15 @@ import process = require('process')
 
 interface config {
   user_id: number[]
+  group_id: number[]
 }
 
 export default class extends BotPlugin {
-  name = '异常捕获'
+  static name = '异常捕获'
 
   config: PluginConfig<config> = {
-    user_id: []
+    user_id: [],
+    group_id: []
   }
 
   init = () => {
@@ -18,6 +20,12 @@ export default class extends BotPlugin {
       this.config.user_id.forEach((user_id) => {
         this.Bot.Api.sendPrivateMsg(
           user_id,
+          `${this.Bot.Data.name}\n未捕获异常 - ${new Date().toLocaleString()}\n${err.stack}`
+        )
+      })
+      this.config.group_id.forEach((group_id) => {
+        this.Bot.Api.sendGroupMsg(
+          group_id,
           `${this.Bot.Data.name}\n未捕获异常 - ${new Date().toLocaleString()}\n${err.stack}`
         )
       })
