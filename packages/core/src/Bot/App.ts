@@ -15,21 +15,21 @@ export class App {
   /**
    * BOT构造函数
    * @param name 插件名
-   * @param dirname 插件设置保存位置
+   * @param config_dir 插件设置保存位置
    */
-  constructor(name: string = 'Bot', dirname?: string | false, filename?: string) {
+  constructor(name: string = 'Bot', config_dir?: string | false, config_filename?: string) {
     let dir: string = null
-    if (dirname !== false) {
-      if (!dirname) {
+    if (config_dir !== false) {
+      if (!config_dir) {
         dir = join(require.main.path, '../config/')
       } else {
-        dir = dirname
+        dir = config_dir
       }
     }
-    if (!filename) {
-      filename = `${name}-config`
+    if (!config_filename) {
+      config_filename = `${name}-config`
     }
-    this.Bot = new Bot(name, dir, filename)
+    this.Bot = new Bot(name, dir, config_filename)
   }
 
   private isStart = false
@@ -126,20 +126,22 @@ export class App {
   /**
    * 设置管理员
    */
-  admin(id_list: number[]): this {
+  admin(id: number[] | number): this {
     if (this.isStart) {
       this.Bot.Log.logWarning('请在应用启动前录入管理员', 'Bot')
       return this
     }
-    this.Bot.Admin.addAdmin(id_list)
+    if (typeof id === 'number') id = [id]
+    this.Bot.Admin.addAdmin(id)
     return this
   }
 
   /**
    * 增加不输出log的群组
    */
-  noLog(gorup_list: number[]): this {
-    gorup_list.forEach((group_id) => {
+  ignore(gorup: number[] | number): this {
+    if (typeof gorup === 'number') gorup = [gorup]
+    gorup.forEach((group_id) => {
       this.Bot.Data.setNoLog(group_id)
     })
     return this
