@@ -82,8 +82,8 @@ export class Data {
   /**
    * 获取指定群员昵称
    */
-  getGroupMenberName(group_id: number, user_id: number) {
-    return this.groupMemberList?.[group_id]?.[user_id] || String(user_id)
+  getGroupMenberName(group_id: number, user_id: number, raw = true) {
+    return this.groupMemberList?.[group_id]?.[user_id] || (raw ? String(user_id) : '')
   }
 
   /**
